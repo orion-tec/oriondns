@@ -70,11 +70,13 @@ func (d *DNS) handleRequest(c *dns.Client) dns.HandlerFunc {
 			for _, q := range msg.Question {
 				for _, bd := range bds {
 					if bd.Recursive && strings.HasSuffix(q.Name, bd.Domain) {
+						fmt.Println("Blocked recursive domain: ", q.Name)
 						isBlocked = true
 						break
 					}
 
 					if q.Name == bd.Domain {
+						fmt.Println("Blocked domain: ", q.Name)
 						isBlocked = true
 						break
 					}
