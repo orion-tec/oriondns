@@ -1,0 +1,5 @@
+db:
+  host: 192.168.0.240
+  port: 32432
+  user: postgres
+  name: oriondns_dev
