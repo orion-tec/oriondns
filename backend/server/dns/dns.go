@@ -10,46 +10,93 @@ import (
 	"time"
 
 	"github.com/miekg/dns"
+	"github.com/orion-tec/oriondns/internal/blockeddomains"
 	"github.com/orion-tec/oriondns/internal/stats"
 	"go.uber.org/fx"
 )
 
 type DNS struct {
-	m     sync.Map
-	cache sync.Map
-	stats stats.DB
+	cacheMap             sync.Map
+	blockedDomainsMap    map[string][]blockeddomains.BlockedDomain
+	blockedDomainsMutext sync.Mutex
+
+	stats          stats.DB
+	blockedDomains blockeddomains.DB
 }
 
-func (d *DNS) handleRequest(c *dns.Client, blockedNames []string) dns.HandlerFunc {
+func (d *DNS) updateBlockedDomainsMap(blockedDomains []blockeddomains.BlockedDomain) {
+	d.blockedDomainsMutext.Lock()
+	defer d.blockedDomainsMutext.Unlock()
+
+	for k := range d.blockedDomainsMap {
+		delete(d.blockedDomainsMap, k)
+	}
+
+	for _, bd := range blockedDomains {
+		id := fmt.Sprintf("%d", bd.ID)
+		d.blockedDomainsMap[id] = append(d.blockedDomainsMap[id], bd)
+	}
+}
+
+func (d *DNS) updateBlockedDomains() {
+	for {
+		fmt.Println("Updating blocked domains")
+		bds, err := d.blockedDomains.GetAll(context.Background())
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		d.updateBlockedDomainsMap(bds)
+		time.Sleep(1 * time.Minute)
+	}
+}
+
+func (d *DNS) handleRequest(c *dns.Client) dns.HandlerFunc {
 	return func(rw dns.ResponseWriter, msg *dns.Msg) {
 
-		for _, q := range msg.Question {
-			err := d.stats.Insert(context.Background(), time.Now(), q.Name)
-			if err != nil {
-				log.Printf("Failed to insert stats: %s", err.Error())
+		// Store stats for the request
+		go func() {
+			for _, q := range msg.Question {
+				err := d.stats.Insert(context.Background(), time.Now(), q.Name)
+				if err != nil {
+					log.Printf("Failed to insert stats: %s", err.Error())
+				}
+			}
+		}()
+
+		// Validate if it's blocked
+		isBlocked := false
+		for _, bds := range d.blockedDomainsMap {
+			for _, q := range msg.Question {
+				for _, bd := range bds {
+					if bd.Recursive && strings.HasSuffix(q.Name, bd.Domain) {
+						isBlocked = true
+						break
+					}
+
+					if q.Name == bd.Domain {
+						isBlocked = true
+						break
+					}
+				}
 			}
 		}
 
-		respFromCache, loaded := d.cache.Load(msg.String())
-		if loaded {
-			rw.WriteMsg(respFromCache.(*dns.Msg))
+		if isBlocked {
+			m := new(dns.Msg)
+			m.Answer = append(m.Answer, &dns.A{
+				A: net.ParseIP("127.0.0.1"),
+			})
+			m.RecursionAvailable = true
+			m.SetReply(msg)
+			rw.WriteMsg(m)
 			return
 		}
 
-		for _, q := range msg.Question {
-			for _, v := range blockedNames {
-				if strings.Contains(q.Name, v) {
-					m := new(dns.Msg)
-					m.Answer = append(m.Answer, &dns.A{
-						A: net.ParseIP("127.0.0.1"),
-					})
-					m.RecursionAvailable = true
-					m.SetReply(msg)
-
-					rw.WriteMsg(m)
-					return
-				}
-			}
+		respFromCache, loaded := d.cacheMap.Load(msg.String())
+		if loaded {
+			rw.WriteMsg(respFromCache.(*dns.Msg))
+			return
 		}
 
 		resp, _, err := c.Exchange(msg, "8.8.8.8:53")
@@ -58,32 +105,25 @@ func (d *DNS) handleRequest(c *dns.Client, blockedNames []string) dns.HandlerFun
 			return
 		}
 
-		d.cache.Store(msg.String(), resp)
+		d.cacheMap.Store(msg.String(), resp)
 		rw.WriteMsg(resp)
 	}
 }
 
-func New(lc fx.Lifecycle, stats stats.DB) *DNS {
+func New(lc fx.Lifecycle, stats stats.DB, blockedDomains blockeddomains.DB) *DNS {
 	c := new(dns.Client)
 
-	blockedNames := []string{
-		"googleads",
-		"cleverwebserver.com",
-		"googleadservices",
-		"doubleclick",
-		"googlesyndication",
-		"googletagservices",
-		"googletagmanager",
-		"googletagmanager",
+	dnsStruct := DNS{
+		stats:             stats,
+		blockedDomains:    blockedDomains,
+		blockedDomainsMap: make(map[string][]blockeddomains.BlockedDomain),
 	}
 
-	dnsStruct := DNS{
-		stats: stats,
-	}
+	go dnsStruct.updateBlockedDomains()
 
 	srv := &dns.Server{Addr: ":53", Net: "udp"}
 
-	srv.Handler = dns.HandlerFunc(dnsStruct.handleRequest(c, blockedNames))
+	srv.Handler = dns.HandlerFunc(dnsStruct.handleRequest(c))
 
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
