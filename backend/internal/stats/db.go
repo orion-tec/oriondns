@@ -22,7 +22,8 @@ func New(db *db.DB) DB {
 func (s *statsDB) Insert(ctx context.Context, t time.Time, domain string) error {
 	// Truncate the time to the minute
 	// This is to ensure that we can aggregate stats by 10 minutes
-	newTime := time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute()%10, 0, 0, t.Location())
+	m := t.Minute()
+	newTime := time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), m-t.Minute()%10, 0, 0, t.Location())
 
 	_, err := s.db.Exec(ctx, `
 		INSERT INTO stats_aggregated (time, domain, count) 
