@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/orion-tec/oriondns/config"
 	"github.com/orion-tec/oriondns/db"
+	"github.com/orion-tec/oriondns/internal/blockeddomains"
 	"github.com/orion-tec/oriondns/internal/stats"
 	"github.com/orion-tec/oriondns/server/dns"
 	"go.uber.org/fx"
@@ -13,6 +14,7 @@ func main() {
 		fx.Provide(config.New),
 		fx.Provide(db.New),
 		fx.Provide(stats.New),
+		fx.Provide(blockeddomains.New),
 		fx.Provide(dns.New),
 		fx.Invoke(func(s *dns.DNS) {}),
 	).Run()
