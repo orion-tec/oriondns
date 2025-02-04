@@ -25,12 +25,6 @@ func New(cfg *config.Config) *DB {
 		cfg.DB.Name,
 	)
 
-	fmt.Println(connString)
-
-	fmt.Println(
-		os.Getenv("DB_PASSWORD"),
-	)
-
 	conn, err := pgxpool.New(context.Background(), connString)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connection to database: %v\n", err)
