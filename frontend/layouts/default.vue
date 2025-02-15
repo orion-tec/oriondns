@@ -1,0 +1,21 @@
+<template>
+  <v-layout class="rounded rounded-md">
+    <v-app-bar title="Orion DNS" :elevation="1"> </v-app-bar>
+
+    <v-navigation-drawer expand-on-hover rail>
+      <v-list>
+        <v-list-item
+          prepend-icon="mdi-view-dashboard"
+          to="/dashboard"
+          title="Dashboard"
+          subtitle="View your data"
+        >
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+
+    <v-main style="min-height: 300px">
+      <slot />
+    </v-main>
+  </v-layout>
+</template>
