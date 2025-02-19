@@ -26,11 +26,12 @@ type Syncer interface {
 	Sync() error
 }
 
-func NewSyncer(lc fx.Lifecycle, ai ai.AI, categoryDB DB, domainsDB domains.DB) *syncer {
+func NewSyncer(lc fx.Lifecycle, ai ai.AI, categoryDB DB, domainsDB domains.DB) Syncer {
 	s := &syncer{ai, categoryDB, domainsDB}
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
 			go func() {
+				fmt.Println("Starting syncer")
 				s.Sync()
 				time.Sleep(5 * time.Second)
 			}()

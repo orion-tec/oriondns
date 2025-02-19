@@ -24,5 +24,6 @@ func main() {
 		fx.Provide(categories.New),
 		fx.Provide(categories.NewSyncer),
 		fx.Invoke(func(s *dns.DNS) {}),
+		fx.Invoke(func(s categories.Syncer) {}),
 	).Run()
 }
