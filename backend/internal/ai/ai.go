@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strings"
 )
 
 type AI interface {
@@ -73,6 +74,10 @@ func (a *ai) Query(query string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
+	dataRespStr := string(dataResp)
+	dataRespStr = strings.TrimPrefix(dataRespStr, "```json")
+	dataRespStr = strings.TrimSuffix(dataRespStr, "```")
 
 	return string(dataResp), nil
 }

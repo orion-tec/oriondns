@@ -83,7 +83,7 @@ func (s *syncer) Sync() error {
 		}
 
 		log.Printf("Domain %s categorized as %v\n", domain.Domain, c.Category)
-		time.Sleep(1 * time.Second)
+		time.Sleep(10 * time.Second)
 	}
 
 	return nil
