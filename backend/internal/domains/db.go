@@ -14,7 +14,7 @@ type domainsDB struct {
 type DB interface {
 	Insert(ctx context.Context, domain string) error
 	GetAll(ctx context.Context) ([]Domain, error)
-	GetByName(ctx context.Context, name string) (*Domain, error)
+	GetByDomain(ctx context.Context, domain string) (*Domain, error)
 	GetDomainsWithoutCategory(ctx context.Context) ([]Domain, error)
 }
 
@@ -24,10 +24,10 @@ func New(db *db.DB) DB {
 
 func (b *domainsDB) GetDomainsWithoutCategory(ctx context.Context) ([]Domain, error) {
 	row, err := b.db.Query(ctx, `
-		SELECT d.name as name
+		SELECT d.domain as domain
 		FROM domains d
 						 left join domain_categories dc
-											 on d.name = dc.domain_name
+											 on d.domain = dc.domain
 						 left join categories c
 											 on dc.category_id = c.id
 		where c.id is null;
@@ -44,22 +44,22 @@ func (b *domainsDB) GetDomainsWithoutCategory(ctx context.Context) ([]Domain, er
 	return domains, nil
 }
 
-func (b *domainsDB) GetByName(ctx context.Context, name string) (*Domain, error) {
+func (b *domainsDB) GetByDomain(ctx context.Context, domain string) (*Domain, error) {
 	row, err := b.db.Query(ctx, `
-		SELECT name
+		SELECT domain
 		FROM domains
-		WHERE name = $1
-	`, name)
+		WHERE domain = $1
+	`, domain)
 	if err != nil {
 		return nil, err
 	}
 
-	domain, err := pgx.CollectExactlyOneRow(row, pgx.RowToStructByName[Domain])
+	domainStr, err := pgx.CollectExactlyOneRow(row, pgx.RowToStructByName[Domain])
 	if err != nil {
 		return nil, err
 	}
 
-	return &domain, nil
+	return &domainStr, nil
 }
 
 func (b *domainsDB) Insert(ctx context.Context, domain string) error {
@@ -77,7 +77,7 @@ func (b *domainsDB) Insert(ctx context.Context, domain string) error {
 
 func (b *domainsDB) GetAll(ctx context.Context) ([]Domain, error) {
 	rows, err := b.db.Query(ctx, `
-		SELECT name
+		SELECT domain, created_at, updated_at, used_count
 		FROM domains
 	`)
 	if err != nil {
