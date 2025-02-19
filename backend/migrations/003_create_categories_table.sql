@@ -1,8 +1,3 @@
-CREATE TABLE categories (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL
-);
-
 CREATE TABLE domains (
     domain VARCHAR(255) NOT NULL,
     used_count INT DEFAULT 0,
@@ -14,7 +9,6 @@ CREATE TABLE domains (
 
 CREATE TABLE domain_categories (
     domain VARCHAR(255) NOT NULL,
-    category_id INT NOT NULL,
-    FOREIGN KEY (domain) REFERENCES domains(domain),
-    FOREIGN KEY (category_id) REFERENCES categories(id)
+    category VARCHAR(255) NOT NULL,
+    FOREIGN KEY (domain) REFERENCES domains(domain)
 );
