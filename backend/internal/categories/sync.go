@@ -61,7 +61,7 @@ func (s *syncer) Sync() error {
 		log.Printf("Processing domain %s\n", domain.Domain)
 		query := fmt.Sprintf(`
 			Considering domain %s, which content category you thing would be a good fit for it?
-			Answer me only with a json with a 'category' key and an array with sanitized categories all in lower case, without spaces and ordered by relevance without markdown.
+			Answer me only with a json with a 'category' key and an array with sanitized categories all in lower case, with spaces replaced with underscore and ordered by relevance without markdown.
 		`, domain.Domain)
 		answer, err := s.ai.Query(query)
 		if errors.Is(err, ai.ErrRateLimit) {
