@@ -46,7 +46,7 @@ func (a *ai) Query(query string) (string, error) {
 	url := "https://api.openai.com/v1/chat/completions"
 
 	q := QueryRequest{
-		Model: "gpt-4o-mini",
+		Model: "03-mini",
 		Store: true,
 		Messages: []Message{
 			{
@@ -79,14 +79,14 @@ func (a *ai) Query(query string) (string, error) {
 		return "", err
 	}
 
-	if resp.StatusCode == 429 {
-		fmt.Println(string(dataResp))
-		return "", ErrRateLimit
-	}
-
 	dataRespStr := string(dataResp)
 	dataRespStr = strings.TrimPrefix(dataRespStr, "```json ")
 	dataRespStr = strings.TrimSuffix(dataRespStr, " ```")
+
+	if resp.StatusCode == 429 {
+		fmt.Println(dataRespStr)
+		return "", ErrRateLimit
+	}
 
 	if os.Getenv("DEBUG") == "1" {
 		fmt.Println(dataRespStr)
