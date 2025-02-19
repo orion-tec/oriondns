@@ -11,6 +11,7 @@ import (
 
 	"github.com/miekg/dns"
 	"github.com/orion-tec/oriondns/internal/blockeddomains"
+	"github.com/orion-tec/oriondns/internal/domains"
 	"github.com/orion-tec/oriondns/internal/stats"
 	"go.uber.org/fx"
 )
@@ -20,8 +21,9 @@ type DNS struct {
 	blockedDomainsMap    map[string][]blockeddomains.BlockedDomain
 	blockedDomainsMutext sync.Mutex
 
-	stats          stats.DB
 	blockedDomains blockeddomains.DB
+	domain         domains.DB
+	stats          stats.DB
 }
 
 func (d *DNS) updateBlockedDomainsMap(blockedDomains []blockeddomains.BlockedDomain) {
@@ -57,7 +59,13 @@ func (d *DNS) handleRequest(c *dns.Client) dns.HandlerFunc {
 		// Store stats for the request
 		go func() {
 			for _, q := range msg.Question {
-				err := d.stats.Insert(context.Background(), time.Now(), q.Name)
+				name := strings.TrimSuffix(q.Name, ".")
+				err := d.domain.Insert(context.Background(), name)
+				if err != nil {
+					log.Printf("Failed to insert domain: %s", err.Error())
+				}
+
+				err = d.stats.Insert(context.Background(), time.Now(), q.Name)
 				if err != nil {
 					log.Printf("Failed to insert stats: %s", err.Error())
 				}
@@ -112,12 +120,13 @@ func (d *DNS) handleRequest(c *dns.Client) dns.HandlerFunc {
 	}
 }
 
-func New(lc fx.Lifecycle, stats stats.DB, blockedDomains blockeddomains.DB) *DNS {
+func New(lc fx.Lifecycle, stats stats.DB, blockedDomains blockeddomains.DB, domain domains.DB) *DNS {
 	c := new(dns.Client)
 
 	dnsStruct := DNS{
 		stats:             stats,
 		blockedDomains:    blockedDomains,
+		domain:            domain,
 		blockedDomainsMap: make(map[string][]blockeddomains.BlockedDomain),
 	}
 
