@@ -15,10 +15,6 @@ jobs:
         with:
           go-version: stable
 
-      - name: Lint backend folder
-        working-directory: backend
-        run: go vet ./...
-
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v6
         with:
