@@ -8,14 +8,21 @@ jobs:
   lint-projects:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: "1.24"
           cache-dependency-path: |
             backend/go.mod
 
-      - name: Vet backend
-        run: go vet ./backend/...
+      - name: Lint backend folder
+        working-directory: backend
+        run: go vet ./...
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          working-directory: backend
+          version: v1.60
