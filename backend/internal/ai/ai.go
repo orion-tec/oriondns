@@ -74,13 +74,14 @@ func (a *ai) Query(query string) (string, error) {
 		return "", err
 	}
 
-	if resp.StatusCode == 429 {
-		return "", ErrRateLimit
-	}
-
 	dataResp, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
+	}
+
+	if resp.StatusCode == 429 {
+		fmt.Println(string(dataResp))
+		return "", ErrRateLimit
 	}
 
 	dataRespStr := string(dataResp)
