@@ -101,13 +101,20 @@ func (d *DNS) handleRequest(c *dns.Client) dns.HandlerFunc {
 			})
 			m.RecursionAvailable = true
 			m.SetReply(msg)
-			rw.WriteMsg(m)
+			err := rw.WriteMsg(m)
+			if err != nil {
+				log.Printf("Failed to write msg: %s\n", err.Error())
+			}
+
 			return
 		}
 
 		respFromCache, loaded := d.cacheMap.Load(msg.String())
 		if loaded {
-			rw.WriteMsg(respFromCache.(*dns.Msg))
+			err := rw.WriteMsg(respFromCache.(*dns.Msg))
+			if err != nil {
+				log.Printf("Failed to write msg: %s\n", err.Error())
+			}
 			return
 		}
 
@@ -118,7 +125,10 @@ func (d *DNS) handleRequest(c *dns.Client) dns.HandlerFunc {
 		}
 
 		d.cacheMap.Store(msg.String(), resp)
-		rw.WriteMsg(resp)
+		err = rw.WriteMsg(resp)
+		if err != nil {
+			log.Printf("Failed to write msg: %s\n", err.Error())
+		}
 	}
 }
 
