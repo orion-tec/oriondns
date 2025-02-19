@@ -3,6 +3,7 @@ package categories
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"time"
@@ -64,6 +65,11 @@ func (s *syncer) Sync() error {
 			Answer me only with a json with a 'category' key and an array with sanitized categories all in lower case.
 		`, domain.Domain)
 		answer, err := s.ai.Query(query)
+		if errors.Is(err, ai.ErrRateLimit) {
+			log.Printf("Rate limit exceeded, waiting 10 minutes\n")
+			time.Sleep(10 * time.Minute)
+			continue
+		}
 		if err != nil {
 			log.Printf("Error on query AI for domain %s: %s\n", domain.Domain, err)
 			continue

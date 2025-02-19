@@ -10,6 +10,10 @@ import (
 	"strings"
 )
 
+var (
+	ErrRateLimit = fmt.Errorf("rate limit exceeded")
+)
+
 type AI interface {
 	Query(query string) (string, error)
 }
@@ -70,6 +74,10 @@ func (a *ai) Query(query string) (string, error) {
 		return "", err
 	}
 
+	if resp.StatusCode == 429 {
+		return "", ErrRateLimit
+	}
+
 	dataResp, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
@@ -78,6 +86,10 @@ func (a *ai) Query(query string) (string, error) {
 	dataRespStr := string(dataResp)
 	dataRespStr = strings.TrimPrefix(dataRespStr, "```json ")
 	dataRespStr = strings.TrimSuffix(dataRespStr, " ```")
+
+	if os.Getenv("DEBUG") == "1" {
+		fmt.Println(dataRespStr)
+	}
 
 	return string(dataResp), nil
 }
