@@ -29,6 +29,7 @@ func (b *domainsDB) GetDomainsWithoutCategory(ctx context.Context) ([]Domain, er
 						 LEFT JOIN public.domain_categories dc ON d.domain = dc.domain
 		WHERE category IS NULL
 		ORDER BY used_count DESC
+		LIMIT 10
 	`)
 	if err != nil {
 		return nil, err
