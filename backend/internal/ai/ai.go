@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 )
 
 var (
@@ -34,7 +35,9 @@ type QueryRequest struct {
 }
 
 func New() AI {
-	cli := http.Client{}
+	cli := http.Client{
+		Timeout: 10 * time.Second,
+	}
 
 	return &ai{
 		client: cli,
