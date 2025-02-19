@@ -92,5 +92,13 @@ func (a *ai) Query(query string) (string, error) {
 		fmt.Println(dataRespStr)
 	}
 
-	return string(dataResp), nil
+	m := map[string]any{}
+	err = json.Unmarshal([]byte(dataRespStr), &m)
+	if err != nil {
+		return "", err
+	}
+
+	answer := m["choices"].([]any)[0].(map[string]any)["message"].(map[string]any)["content"].(string)
+
+	return answer, nil
 }

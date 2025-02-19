@@ -26,7 +26,10 @@ func (b *categoriesDB) Insert(ctx context.Context, domain string, categories []s
 		return err
 	}
 
-	for _, category := range categories {
+	for i, category := range categories {
+		if i > 1 {
+			continue
+		}
 		_, err := tx.Exec(ctx, `
 			INSERT INTO domain_categories (domain, category)
 			VALUES ($1, $2)
