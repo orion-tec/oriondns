@@ -46,7 +46,7 @@ func (a *ai) Query(query string) (string, error) {
 	url := "https://api.openai.com/v1/chat/completions"
 
 	q := QueryRequest{
-		Model: "03-mini",
+		Model: "gpt-3.5-turbo",
 		Store: true,
 		Messages: []Message{
 			{
