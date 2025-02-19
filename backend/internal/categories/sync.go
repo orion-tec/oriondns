@@ -32,8 +32,8 @@ func NewSyncer(lc fx.Lifecycle, ai ai.AI, categoryDB DB, domainsDB domains.DB) S
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
 			go func() {
-				fmt.Println("Starting syncer")
 				for {
+					fmt.Println("Syncing categories")
 					err := s.Sync()
 					if err != nil {
 						log.Printf("Error on syncer: %s\n", err)
