@@ -8,6 +8,7 @@ CREATE TABLE domains (
     used_count INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT domains_uq UNIQUE (domain),
     PRIMARY KEY (domain)
 );
 
