@@ -14,9 +14,6 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: stable
-          go-version-file: backend/go.mod
-          cache-dependency-path: |
-            backend/go.mod
 
       - name: Lint backend folder
         working-directory: backend
@@ -26,4 +23,3 @@ jobs:
         uses: golangci/golangci-lint-action@v6
         with:
           working-directory: backend
-          version: v1.60
