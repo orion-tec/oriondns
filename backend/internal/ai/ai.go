@@ -75,9 +75,9 @@ func (a *ai) Query(query string) (string, error) {
 		return "", err
 	}
 
-	dataRespStr := string(dataResp)
-	dataRespStr = strings.TrimPrefix(dataRespStr, "```json")
-	dataRespStr = strings.TrimSuffix(dataRespStr, "```")
+	dataRespStr := string(dataResp
+	dataRespStr = strings.TrimPrefix(dataRespStr, "```json ")
+	dataRespStr = strings.TrimSuffix(dataRespStr, " ```")
 
 	return string(dataResp), nil
 }
