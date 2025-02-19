@@ -1,0 +1,21 @@
+name: Vet Go Application
+
+on:
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  lint-projects:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.24"
+          cache-dependency-path: |
+            backend/go.mod
+
+      - name: Vet backend
+        run: go vet ./backend/...
