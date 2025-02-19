@@ -6,6 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"os"
+	"strconv"
 	"time"
 
 	"github.com/orion-tec/oriondns/internal/ai"
@@ -17,6 +19,8 @@ type syncer struct {
 	ai         ai.AI
 	categoryDB DB
 	domainDB   domains.DB
+
+	secondsToSleep int
 }
 
 type CategoryAIAnswer struct {
@@ -28,7 +32,13 @@ type Syncer interface {
 }
 
 func NewSyncer(lc fx.Lifecycle, ai ai.AI, categoryDB DB, domainsDB domains.DB) Syncer {
-	s := &syncer{ai, categoryDB, domainsDB}
+	timeToSleepStr := os.Getenv("SYNCER_SECONDS_TO_SLEEP")
+	secondsToSleep, err := strconv.Atoi(timeToSleepStr)
+	if err != nil {
+		secondsToSleep = 60
+	}
+
+	s := &syncer{ai, categoryDB, domainsDB, secondsToSleep}
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
 			go func() {
@@ -88,7 +98,7 @@ func (s *syncer) Sync() error {
 		}
 
 		log.Printf("Domain %s categorized as %v\n", domain.Domain, c.Category)
-		time.Sleep(1 * time.Minute)
+		time.Sleep(time.Duration(s.secondsToSleep) * time.Second)
 	}
 
 	return nil
