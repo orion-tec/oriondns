@@ -32,7 +32,10 @@ func NewSyncer(lc fx.Lifecycle, ai ai.AI, categoryDB DB, domainsDB domains.DB) S
 		OnStart: func(ctx context.Context) error {
 			go func() {
 				fmt.Println("Starting syncer")
-				s.Sync()
+				err := s.Sync()
+				if err != nil {
+					log.Printf("Error on syncer: %s\n", err)
+				}
 				time.Sleep(5 * time.Second)
 			}()
 			return nil
@@ -78,5 +81,5 @@ func (s *syncer) Sync() error {
 		time.Sleep(1 * time.Second)
 	}
 
-	return err
+	return nil
 }
