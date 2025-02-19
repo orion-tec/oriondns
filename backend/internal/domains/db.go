@@ -25,9 +25,10 @@ func New(db *db.DB) DB {
 func (b *domainsDB) GetDomainsWithoutCategory(ctx context.Context) ([]Domain, error) {
 	row, err := b.db.Query(ctx, `
 		SELECT d.*
-		from domains d
-						 left join public.domain_categories dc on d.domain = dc.domain
-		where category is null;
+		FROM domains d
+						 LEFT JOIN public.domain_categories dc ON d.domain = dc.domain
+		WHERE category IS NULL
+		ORDER BY used_count DESC
 	`)
 	if err != nil {
 		return nil, err
