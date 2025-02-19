@@ -32,11 +32,13 @@ func NewSyncer(lc fx.Lifecycle, ai ai.AI, categoryDB DB, domainsDB domains.DB) S
 		OnStart: func(ctx context.Context) error {
 			go func() {
 				fmt.Println("Starting syncer")
-				err := s.Sync()
-				if err != nil {
-					log.Printf("Error on syncer: %s\n", err)
+				for {
+					err := s.Sync()
+					if err != nil {
+						log.Printf("Error on syncer: %s\n", err)
+					}
+					time.Sleep(5 * time.Second)
 				}
-				time.Sleep(5 * time.Second)
 			}()
 			return nil
 		},
@@ -54,7 +56,9 @@ func (s *syncer) Sync() error {
 		return err
 	}
 
+	log.Printf("Found %d domains without category\n", len(domains))
 	for _, domain := range domains {
+		log.Printf("Processing domain %s\n", domain.Domain)
 		query := fmt.Sprintf(`
 			Considering domain %s, which content category you thing would be a good fit for it?
 			Answer me only with a json with a 'category' key and an array with sanitized categories all in lower case.
@@ -78,6 +82,7 @@ func (s *syncer) Sync() error {
 			continue
 		}
 
+		log.Printf("Domain %s categorized as %v\n", domain.Domain, c.Category)
 		time.Sleep(1 * time.Second)
 	}
 
