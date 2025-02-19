@@ -62,12 +62,14 @@ func (d *DNS) handleRequest(c *dns.Client) dns.HandlerFunc {
 		go func() {
 			for _, q := range msg.Question {
 				name := strings.TrimSuffix(q.Name, ".")
-				err := d.domain.Insert(context.Background(), name)
-				if err != nil {
-					log.Printf("Failed to insert domain: %s", err.Error())
+				if q.Qtype != dns.TypePTR {
+					err := d.domain.Insert(context.Background(), name)
+					if err != nil {
+						log.Printf("Failed to insert domain: %s", err.Error())
+					}
 				}
 
-				err = d.stats.Insert(context.Background(), time.Now(), q.Name)
+				err := d.stats.Insert(context.Background(), time.Now(), q.Name)
 				if err != nil {
 					log.Printf("Failed to insert stats: %s", err.Error())
 				}
