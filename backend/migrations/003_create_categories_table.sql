@@ -14,6 +14,6 @@ CREATE TABLE domains (
 CREATE TABLE domain_categories (
     domain VARCHAR(255) NOT NULL,
     category_id INT NOT NULL,
-    FOREIGN KEY (domain_name) REFERENCES domains(name),
+    FOREIGN KEY (domain) REFERENCES domains(domain),
     FOREIGN KEY (category_id) REFERENCES categories(id)
 );

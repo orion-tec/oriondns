@@ -54,7 +54,7 @@ func (s *syncer) Sync() error {
 		query := fmt.Sprintf(`
 			Considering domain %s, which content category you thing would be a good fit for it?
 			Answer me using a json with a 'category' key and an array with categories for this given domain. `,
-			domain.Name)
+			domain.Domain)
 		answer, err := s.ai.Query(query)
 		if err != nil {
 			return err
