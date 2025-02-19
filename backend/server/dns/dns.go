@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/miekg/dns"
+	"github.com/orion-tec/oriondns/internal/ai"
 	"github.com/orion-tec/oriondns/internal/blockeddomains"
 	"github.com/orion-tec/oriondns/internal/domains"
 	"github.com/orion-tec/oriondns/internal/stats"
@@ -24,6 +25,7 @@ type DNS struct {
 	blockedDomains blockeddomains.DB
 	domain         domains.DB
 	stats          stats.DB
+	ai             ai.AI
 }
 
 func (d *DNS) updateBlockedDomainsMap(blockedDomains []blockeddomains.BlockedDomain) {
@@ -120,7 +122,7 @@ func (d *DNS) handleRequest(c *dns.Client) dns.HandlerFunc {
 	}
 }
 
-func New(lc fx.Lifecycle, stats stats.DB, blockedDomains blockeddomains.DB, domain domains.DB) *DNS {
+func New(lc fx.Lifecycle, ai ai.AI, stats stats.DB, blockedDomains blockeddomains.DB, domain domains.DB) *DNS {
 	c := new(dns.Client)
 
 	dnsStruct := DNS{
@@ -128,6 +130,7 @@ func New(lc fx.Lifecycle, stats stats.DB, blockedDomains blockeddomains.DB, doma
 		blockedDomains:    blockedDomains,
 		domain:            domain,
 		blockedDomainsMap: make(map[string][]blockeddomains.BlockedDomain),
+		ai:                ai,
 	}
 
 	go dnsStruct.updateBlockedDomains()

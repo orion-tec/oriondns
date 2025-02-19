@@ -53,17 +53,24 @@ func (s *syncer) Sync() error {
 	for _, domain := range domains {
 		query := fmt.Sprintf(`
 			Considering domain %s, which content category you thing would be a good fit for it?
-			Answer me using a json with a 'category' key and an array with categories for this given domain. `,
-			domain.Domain)
+			Answer me only with a json with a 'category' key and an array with sanitized categories all in lower case.
+		`, domain.Domain)
 		answer, err := s.ai.Query(query)
 		if err != nil {
-			return err
+			log.Printf("Error on query AI for domain %s: %s\n", domain.Domain, err)
+			continue
 		}
 
 		c := CategoryAIAnswer{}
 		err = json.Unmarshal([]byte(answer), &c)
 		if err != nil {
-			log.Println("Error on decode data from AI", err)
+			log.Printf("Error on decode data from AI for domain %s: %s\n", domain.Domain, err)
+			continue
+		}
+
+		err = s.categoryDB.Insert(context.Background(), domain.Domain, c.Category)
+		if err != nil {
+			log.Printf("Error on insert data on db for domain %s: %s\n", domain.Domain, err)
 			continue
 		}
 
