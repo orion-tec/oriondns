@@ -38,7 +38,6 @@ func NewSyncer(lc fx.Lifecycle, ai ai.AI, categoryDB DB, domainsDB domains.DB) S
 					if err != nil {
 						log.Printf("Error on syncer: %s\n", err)
 					}
-					time.Sleep(5 * time.Second)
 				}
 			}()
 			return nil
@@ -62,7 +61,7 @@ func (s *syncer) Sync() error {
 		log.Printf("Processing domain %s\n", domain.Domain)
 		query := fmt.Sprintf(`
 			Considering domain %s, which content category you thing would be a good fit for it?
-			Answer me only with a json with a 'category' key and an array with sanitized categories all in lower case, without spaces and ordered by relevance.
+			Answer me only with a json with a 'category' key and an array with sanitized categories all in lower case, without spaces and ordered by relevance without markdown.
 		`, domain.Domain)
 		answer, err := s.ai.Query(query)
 		if errors.Is(err, ai.ErrRateLimit) {
@@ -89,7 +88,7 @@ func (s *syncer) Sync() error {
 		}
 
 		log.Printf("Domain %s categorized as %v\n", domain.Domain, c.Category)
-		time.Sleep(10 * time.Second)
+		time.Sleep(1 * time.Minute)
 	}
 
 	return nil
