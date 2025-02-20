@@ -49,6 +49,8 @@ func NewSyncer(lc fx.Lifecycle, ai ai.AI, categoryDB DB, domainsDB domains.DB) S
 					if err != nil {
 						log.Printf("Error on syncer: %s\n", err)
 					}
+
+					time.Sleep(1 * time.Minute)
 				}
 			}()
 			return nil

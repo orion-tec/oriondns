@@ -70,7 +70,8 @@ func (d *DNS) handleRequest(c *dns.Client) dns.HandlerFunc {
 					}
 				}
 
-				err := d.stats.Insert(context.Background(), time.Now(), name)
+				qType := getTypeString(q.Qtype)
+				err := d.stats.Insert(context.Background(), time.Now(), name, qType)
 				if err != nil {
 					log.Printf("Failed to insert stats: %s", err.Error())
 				}
