@@ -10,11 +10,12 @@ import (
 	"time"
 
 	"github.com/miekg/dns"
+	"go.uber.org/fx"
+
 	"github.com/orion-tec/oriondns/internal/ai"
 	"github.com/orion-tec/oriondns/internal/blockeddomains"
 	"github.com/orion-tec/oriondns/internal/domains"
 	"github.com/orion-tec/oriondns/internal/stats"
-	"go.uber.org/fx"
 )
 
 type DNS struct {

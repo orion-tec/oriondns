@@ -1,6 +1,8 @@
 package main
 
 import (
+	"go.uber.org/fx"
+
 	"github.com/orion-tec/oriondns/config"
 	"github.com/orion-tec/oriondns/db"
 	"github.com/orion-tec/oriondns/internal/ai"
@@ -9,7 +11,6 @@ import (
 	"github.com/orion-tec/oriondns/internal/domains"
 	"github.com/orion-tec/oriondns/internal/stats"
 	"github.com/orion-tec/oriondns/server/dns"
-	"go.uber.org/fx"
 )
 
 func main() {

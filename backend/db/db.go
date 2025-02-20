@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+
 	"github.com/orion-tec/oriondns/config"
 )
 

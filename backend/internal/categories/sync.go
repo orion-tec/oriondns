@@ -10,9 +10,10 @@ import (
 	"strconv"
 	"time"
 
+	"go.uber.org/fx"
+
 	"github.com/orion-tec/oriondns/internal/ai"
 	"github.com/orion-tec/oriondns/internal/domains"
-	"go.uber.org/fx"
 )
 
 type syncer struct {
