@@ -49,8 +49,6 @@ func NewSyncer(lc fx.Lifecycle, ai ai.AI, categoryDB DB, domainsDB domains.DB) S
 					if err != nil {
 						log.Printf("Error on syncer: %s\n", err)
 					}
-
-					time.Sleep(1 * time.Minute)
 				}
 			}()
 			return nil
@@ -67,6 +65,12 @@ func (s *syncer) Sync() error {
 	domains, err := s.domainDB.GetDomainsWithoutCategory(context.Background())
 	if err != nil {
 		return err
+	}
+
+	if (len(domains)) == 0 {
+		log.Printf("No domains without category found\n")
+		time.Sleep(1 * time.Minute)
+		return nil
 	}
 
 	log.Printf("Found %d domains without category\n", len(domains))

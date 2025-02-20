@@ -23,29 +23,18 @@ const option = computed(() => {
     : [];
 
   return {
-    title: {
-      text: "Most used domains",
-      textStyle: { color: "white" },
-      textAlign: "auto",
-    },
     xAxis: {
       type: "category",
       data: dimensions,
       name: "Domains",
-      nameTextStyle: { color: "white" },
       axisLabel: {
-        rotate: 30,
+        rotate: 45,
         color: "white",
         overflow: "truncate",
-        width: "95",
+        width: "90",
       },
     },
-    yAxis: {
-      type: "value",
-      name: "Count",
-      axisLabel: { color: "white" },
-      nameTextStyle: { color: "white" },
-    },
+    yAxis: { type: "value", name: "Count" },
     series: [{ type: "bar", data: counts }],
     tooltip: {},
     legend: {},
