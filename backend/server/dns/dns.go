@@ -10,11 +10,12 @@ import (
 	"time"
 
 	"github.com/miekg/dns"
+	"go.uber.org/fx"
+
 	"github.com/orion-tec/oriondns/internal/ai"
 	"github.com/orion-tec/oriondns/internal/blockeddomains"
 	"github.com/orion-tec/oriondns/internal/domains"
 	"github.com/orion-tec/oriondns/internal/stats"
-	"go.uber.org/fx"
 )
 
 type DNS struct {
@@ -69,7 +70,7 @@ func (d *DNS) handleRequest(c *dns.Client) dns.HandlerFunc {
 					}
 				}
 
-				err := d.stats.Insert(context.Background(), time.Now(), q.Name)
+				err := d.stats.Insert(context.Background(), time.Now(), name)
 				if err != nil {
 					log.Printf("Failed to insert stats: %s", err.Error())
 				}
@@ -152,7 +153,7 @@ func New(lc fx.Lifecycle, ai ai.AI, stats stats.DB, blockedDomains blockeddomain
 	srv.Handler = dns.HandlerFunc(dnsStruct.handleRequest(c))
 
 	lc.Append(fx.Hook{
-		OnStart: func(ctx context.Context) error {
+		OnStart: func(_ context.Context) error {
 			go func() {
 				fmt.Println("Listening on :53")
 				if err := srv.ListenAndServe(); err != nil {
@@ -161,7 +162,7 @@ func New(lc fx.Lifecycle, ai ai.AI, stats stats.DB, blockedDomains blockeddomain
 			}()
 			return nil
 		},
-		OnStop: func(ctx context.Context) error {
+		OnStop: func(_ context.Context) error {
 			return nil
 		},
 	})
