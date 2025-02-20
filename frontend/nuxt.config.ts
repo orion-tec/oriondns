@@ -12,7 +12,7 @@ export default defineNuxtConfig({
         config.plugins.push(vuetify({ autoImport: true }));
       });
     },
-    //...
+    "nuxt-echarts",
   ],
   vite: {
     vue: {
@@ -20,5 +20,9 @@ export default defineNuxtConfig({
         transformAssetUrls,
       },
     },
+  },
+  echarts: {
+    charts: ["BarChart"],
+    components: ["DatasetComponent", "GridComponent", "TooltipComponent"],
   },
 });
