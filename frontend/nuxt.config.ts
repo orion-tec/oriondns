@@ -25,4 +25,7 @@ export default defineNuxtConfig({
     charts: ["BarChart"],
     components: ["DatasetComponent", "GridComponent", "TooltipComponent"],
   },
+  routeRules: {
+    "/api/v1/**": { proxy: `${process.env.BASE_URL}/api/v1/**` },
+  },
 });
