@@ -1,9 +1,9 @@
-import { computed, onMounted, reactive, ref, watch } from "vue";
-
 <script setup lang="ts">
 import "echarts";
 
-const dashboardData = ref(null);
+import { computed, onMounted, ref } from "vue";
+
+const dashboardData = ref<any>(null);
 
 onMounted(() => {
   fetch(`/api/v1/dashboard/most-used-domains`)
@@ -14,19 +14,14 @@ onMounted(() => {
 });
 
 const option = computed(() => {
-  const dimensions = dashboardData.value
-    ? dashboardData.value?.map((i) => i.domain)
-    : [];
+  const dimensions = dashboardData.value ? dashboardData.value?.map((i: any) => i.domain) : [];
 
-  const counts = dashboardData.value
-    ? dashboardData.value?.map((i) => i.count)
-    : [];
+  const counts = dashboardData.value ? dashboardData.value?.map((i: any) => i.count) : [];
 
   return {
     xAxis: {
       type: "category",
       data: dimensions,
-      name: "Domains",
       nameTextStyle: { color: "white" },
       axisLabel: {
         rotate: 30,
@@ -37,7 +32,6 @@ const option = computed(() => {
     },
     yAxis: {
       type: "value",
-      name: "Count",
       axisLabel: { color: "white" },
       nameTextStyle: { color: "white" },
     },
@@ -49,16 +43,55 @@ const option = computed(() => {
 </script>
 
 <template>
-  <v-card text="Most used domains" class="chart-container">
-    <VChart :option="option" />
-  </v-card>
+  <div class="filter-container">
+    <v-select
+      width="100%"
+      label="Range"
+      :items="['Last month', 'Last 2 weeks', 'Last week', 'Last 3 days', 'Yesterday', 'Today']"
+      variant="underlined"
+    ></v-select>
+    <v-select
+      width="100%"
+      label="Category"
+      :items="['All', 'Adult', 'Games', 'Social Media']"
+      variant="underlined"
+    ></v-select>
+  </div>
+  <div class="dashboard-container">
+    <v-sheet
+      elevation="4"
+      height="300"
+      width="80%"
+    >
+      <VChart :option="option" />
+    </v-sheet>
+    <v-sheet
+      elevation="4"
+      height="300"
+      width="80%"
+    >
+      <VChart :option="option" />
+    </v-sheet>
+  </div>
 </template>
 
 <style scoped>
-.chart-container {
+.dashboard-container {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  gap: 20px;
+}
+
+.filter-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  gap: 20px;
   width: 80%;
-  height: 50%;
-  margin: 30px auto;
-  padding: 0 0 50px 0;
+  margin: auto;
 }
 </style>

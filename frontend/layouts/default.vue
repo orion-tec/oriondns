@@ -14,8 +14,14 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-main style="min-height: 300px">
+    <v-main>
       <slot />
     </v-main>
   </v-layout>
 </template>
+
+<style>
+.v-application__wrap {
+  min-height: 0vh !important;
+}
+</style>
