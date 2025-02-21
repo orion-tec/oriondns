@@ -24,4 +24,4 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: us-east1-docker.pkg.dev/oriontec-422114/oriondns/frontend
-          context: Dockerfile-frontend
+          file: Dockerfile-frontend
