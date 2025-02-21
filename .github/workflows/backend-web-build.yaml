@@ -21,7 +21,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            us-east1-docker.pkg.dev/oriontec-422114/oriondns/frontend
+            us-east1-docker.pkg.dev/oriontec-422114/oriondns/backend-web
           tags: |
             type=sha
 
