@@ -1,5 +1,5 @@
 db:
   host: postgres-service.database
-  port: 32432
+  port: 5432
   user: postgres
   name: oriondns_stg
