@@ -1,0 +1,14 @@
+FROM golang:latest
+
+WORKDIR /app
+
+COPY backend/go.mod backend/go.sum ./
+RUN go mod download
+
+COPY backend/ ./
+
+RUN go build -o /app-web /app/cmd/httpserver/main.go
+
+EXPOSE 8080
+
+CMD ["/app-web"]
