@@ -1,0 +1,15 @@
+FROM golang:latest
+
+WORKDIR /app
+
+COPY backend/go.mod backend/go.sum ./
+RUN go mod download
+
+COPY backend/** ./
+
+RUN CGO_ENABLED=0 GOOS=linux go build -o /app-web
+
+EXPOSE 8080
+
+# Run
+CMD ["/app-web"]
