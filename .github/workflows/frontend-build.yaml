@@ -2,6 +2,8 @@ name: Build frontend image
 
 on:
   push:
+    branches:
+      - main
 
 jobs:
   docker:
