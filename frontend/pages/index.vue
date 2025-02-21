@@ -6,7 +6,7 @@ import "echarts";
 const dashboardData = ref(null);
 
 onMounted(() => {
-  fetch("http://localhost:8080/api/v1/dashboard/most-used-domains")
+  fetch(`${process.env.BASE_URL}/api/v1/dashboard/most-used-domains`)
     .then((response) => response.json())
     .then((data) => {
       dashboardData.value = data;
