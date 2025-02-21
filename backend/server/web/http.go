@@ -2,6 +2,7 @@ package web
 
 import (
 	"context"
+	"log"
 	"net/http"
 
 	"go.uber.org/fx"
@@ -13,6 +14,10 @@ type HTTP struct {
 	stats stats.DB
 
 	s *http.Server
+}
+
+func (h *HTTP) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	log.Printf("HTTP %s %s", r.Method, r.URL.Path)
 }
 
 func New(lc fx.Lifecycle, stats stats.DB) *HTTP {
