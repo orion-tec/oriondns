@@ -3,6 +3,8 @@ name: Vet Go Application
 on:
   pull_request:
     branches: ["main"]
+    paths:
+      - backend/**
 
 jobs:
   lint-projects:
