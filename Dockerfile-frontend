@@ -10,5 +10,7 @@ COPY . .
 
 EXPOSE 3000
 
+ENV BASE_URL=http://oriondns-be-service:8080
+
 RUN npm run build
 CMD [ "node", ".output/server/index.mjs" ]
