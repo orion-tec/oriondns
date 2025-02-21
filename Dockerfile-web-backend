@@ -10,4 +10,4 @@ RUN go build -o /app-web /app/cmd/httpserver/main.go
 
 EXPOSE 8080
 
-CMD ["/app-web", "-config", "./config/staging.yaml"]
+CMD ["/app-web", "-config", "./config/staging-web.yaml"]
