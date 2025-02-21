@@ -23,12 +23,6 @@ jobs:
           images: |
             us-east1-docker.pkg.dev/oriontec-422114/oriondns/frontend
           tags: |
-            type=schedule
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
             type=sha
 
       - name: Set up Docker Buildx
