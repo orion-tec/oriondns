@@ -23,11 +23,6 @@ const option = computed(() => {
     : [];
 
   return {
-    title: {
-      text: "Most used domains",
-      textStyle: { color: "white" },
-      textAlign: "auto",
-    },
     xAxis: {
       type: "category",
       data: dimensions,
@@ -54,15 +49,16 @@ const option = computed(() => {
 </script>
 
 <template>
-  <div class="chart-container">
+  <v-card text="Most used domains" class="chart-container">
     <VChart :option="option" />
-  </div>
+  </v-card>
 </template>
 
 <style scoped>
 .chart-container {
   width: 80%;
   height: 50%;
-  margin: 0 auto;
+  margin: 30px auto;
+  padding: 0 0 50px 0;
 }
 </style>
