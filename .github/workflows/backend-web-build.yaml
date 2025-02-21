@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - backend/**
+      - Dockerfile-web-backend
 
 jobs:
   docker:

@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - frontend/**
+      - Dockerfile-frontend
 
 jobs:
   docker:
