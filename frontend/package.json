@@ -11,10 +11,12 @@
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
+    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@vue/typescript-plugin": "^2.2.2",
     "echarts": "^5.6.0",
     "nuxt": "^3.15.4",
     "nuxt-echarts": "^0.2.4",
+    "prettier-plugin-organize-attributes": "^1.0.0",
     "vue": "latest",
     "vue-echarts": "^7.0.3",
     "vue-router": "latest"
