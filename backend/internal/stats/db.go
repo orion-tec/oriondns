@@ -8,6 +8,7 @@ import (
 	"github.com/jackc/pgx/v5"
 
 	"github.com/huandu/go-sqlbuilder"
+
 	"github.com/orion-tec/oriondns/db"
 )
 
@@ -70,7 +71,7 @@ func (s *statsDB) GetMostUsedDomains(ctx context.Context, from, to time.Time, ca
 	var inData string
 	if len(categories) > 0 {
 		inData = strings.Join(categories, ",")
-	}else{
+	} else {
 		inData = "SELECT DISTINCT category FROM domain_categories"
 	}
 
