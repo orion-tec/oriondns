@@ -1,22 +1,23 @@
 <script setup lang="ts">
 import "echarts";
+import { getMostUsedDomains } from "~/services/dashboard";
 
-import { computed, onMounted, ref } from "vue";
+import { computed, ref } from "vue";
 
-const dashboardData = ref<any>(null);
+const selectedRange = ref<any>("Today");
+const selectedCategories = ref<string[]>([]);
 
-onMounted(() => {
-  fetch(`/api/v1/dashboard/most-used-domains`)
-    .then((response) => response.json())
-    .then((data) => {
-      dashboardData.value = data;
-    });
-});
+const { data: mostUsedDomains, status: statusMostUsedDomains } = await useAsyncData(
+  () => getMostUsedDomains(selectedRange.value, selectedCategories.value),
+  {
+    server: false,
+    watch: [selectedRange, selectedCategories],
+  },
+);
 
 const option = computed(() => {
-  const dimensions = dashboardData.value ? dashboardData.value?.map((i: any) => i.domain) : [];
-
-  const counts = dashboardData.value ? dashboardData.value?.map((i: any) => i.count) : [];
+  const dimensions = mostUsedDomains.value ? mostUsedDomains.value?.map((i: any) => i.domain) : [];
+  const counts = mostUsedDomains.value ? mostUsedDomains.value?.map((i: any) => i.count) : [];
 
   return {
     xAxis: {
@@ -49,12 +50,16 @@ const option = computed(() => {
       label="Range"
       :items="['Last month', 'Last 2 weeks', 'Last week', 'Last 3 days', 'Yesterday', 'Today']"
       variant="underlined"
+      v-model="selectedRange"
     ></v-select>
     <v-select
       width="100%"
       label="Category"
-      :items="['All', 'Adult', 'Games', 'Social Media']"
+      :items="getDomainCategories()"
       variant="underlined"
+      v-model="selectedCategories"
+      multiple
+      chips
     ></v-select>
   </div>
   <div class="dashboard-container">
@@ -63,14 +68,20 @@ const option = computed(() => {
       height="300"
       width="80%"
     >
-      <VChart :option="option" />
+      <VChart
+        :option="option"
+        v-if="statusMostUsedDomains === 'success'"
+      />
     </v-sheet>
     <v-sheet
       elevation="4"
       height="300"
       width="80%"
     >
-      <VChart :option="option" />
+      <VChart
+        :option="option"
+        v-if="statusMostUsedDomains === 'success'"
+      />
     </v-sheet>
   </div>
 </template>

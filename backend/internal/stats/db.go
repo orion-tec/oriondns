@@ -2,9 +2,12 @@ package stats
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"github.com/jackc/pgx/v5"
+
+	"github.com/huandu/go-sqlbuilder"
 
 	"github.com/orion-tec/oriondns/db"
 )
@@ -15,17 +18,17 @@ type statsDB struct {
 
 type DB interface {
 	Insert(ctx context.Context, t time.Time, domain, domainType string) error
-	GetMostUsedDomains(ctx context.Context, from, to time.Time, limit int) ([]MostUsedDomainResponse, error)
+	GetMostUsedDomains(ctx context.Context, from, to time.Time, categories []string, limit int) ([]MostUsedDomainResponse, error)
 	GetUsedDomainsByTimeAggregation(ctx context.Context, from, to time.Time, domains []string) ([]MostUsedDomainResponse, error)
-	GetMostUsedDomainsByTimeAggregation(ctx context.Context, from, to time.Time) ([]MostUsedDomainResponse, error)
+	GetMostUsedDomainsByTimeAggregation(ctx context.Context, from, to time.Time, categories []string) ([]MostUsedDomainResponse, error)
 }
 
 func New(db *db.DB) DB {
 	return &statsDB{db}
 }
 
-func (s *statsDB) GetMostUsedDomainsByTimeAggregation(ctx context.Context, from, to time.Time) ([]MostUsedDomainResponse, error) {
-	domains, err := s.GetMostUsedDomains(ctx, from, to, 10)
+func (s *statsDB) GetMostUsedDomainsByTimeAggregation(ctx context.Context, from, to time.Time, categories []string) ([]MostUsedDomainResponse, error) {
+	domains, err := s.GetMostUsedDomains(ctx, from, to, categories, 10)
 	if err != nil {
 		return nil, err
 	}
@@ -64,19 +67,40 @@ func (s *statsDB) GetUsedDomainsByTimeAggregation(ctx context.Context, from, to 
 	return res, nil
 }
 
-func (s *statsDB) GetMostUsedDomains(ctx context.Context, from, to time.Time, limit int) ([]MostUsedDomainResponse, error) {
-	query := `
-			SELECT domain, SUM(count) as count
-      FROM stats_aggregated
-      WHERE time >= $1 AND time <= $2 AND q_type != 'PTR'
-      GROUP BY domain
-      ORDER BY count DESC LIMIT $3
-	`
-	rows, err := s.db.Query(ctx, query, from, to, limit)
+func (s *statsDB) GetMostUsedDomains(ctx context.Context, from, to time.Time, categories []string, limit int) ([]MostUsedDomainResponse, error) {
+	var inData string
+	if len(categories) > 0 {
+		inData = strings.Join(categories, ",")
+	} else {
+		inData = "SELECT DISTINCT category FROM domain_categories"
+	}
+
+	sb := sqlbuilder.PostgreSQL.NewSelectBuilder()
+
+	cond := sqlbuilder.NewCond()
+	where := sqlbuilder.NewWhereClause().
+		AddWhereExpr(cond.Args,
+			cond.And(
+				cond.GreaterEqualThan("time", from),
+				cond.LessEqualThan("time", to),
+				cond.NotEqual("q_type", "PTR"),
+				cond.In("dc.category", inData),
+			),
+		)
+
+	sb.Select("sa.domain", "SUM(count) as count").
+		From("stats_aggregated sa").
+		Join("domain_categories dc on dc.domain = sa.domain").
+		GroupBy("sa.domain").
+		OrderBy("count DESC").
+		Limit(limit)
+	sb.WhereClause = where
+
+	query, args := sb.Build()
+	rows, err := s.db.Query(ctx, query, args...)
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
 
 	res, err := pgx.CollectRows(rows, pgx.RowToStructByName[MostUsedDomainResponse])
 	if err != nil {
