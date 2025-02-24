@@ -29,7 +29,7 @@ func New(lc fx.Lifecycle, stats stats.DB) *HTTP {
 	lc.Append(fx.Hook{
 		OnStart: func(_ context.Context) error {
 			go func() {
-				http.HandleFunc("GET /api/v1/dashboard/most-used-domains", http.HandlerFunc(httpStruct.getMostUsedDomainsDashboard))
+				http.HandleFunc("POST /api/v1/dashboard/most-used-domains", http.HandlerFunc(httpStruct.getMostUsedDomainsDashboard))
 				err := http.ListenAndServe(":8080", nil)
 				if err != nil {
 					panic(err)
