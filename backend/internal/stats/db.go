@@ -2,7 +2,6 @@ package stats
 
 import (
 	"context"
-	"strings"
 	"time"
 
 	"github.com/jackc/pgx/v5"
@@ -68,25 +67,27 @@ func (s *statsDB) GetUsedDomainsByTimeAggregation(ctx context.Context, from, to 
 }
 
 func (s *statsDB) GetMostUsedDomains(ctx context.Context, from, to time.Time, categories []string, limit int) ([]MostUsedDomainResponse, error) {
-	var inData string
-	if len(categories) > 0 {
-		inData = strings.Join(categories, ",")
-	} else {
-		inData = "SELECT DISTINCT category FROM domain_categories"
-	}
-
 	sb := sqlbuilder.PostgreSQL.NewSelectBuilder()
 
 	cond := sqlbuilder.NewCond()
 	where := sqlbuilder.NewWhereClause().
 		AddWhereExpr(cond.Args,
-			cond.And(
-				cond.GreaterEqualThan("time", from),
-				cond.LessEqualThan("time", to),
-				cond.NotEqual("q_type", "PTR"),
-				cond.In("dc.category", inData),
-			),
+			cond.GreaterEqualThan("time", from),
+			cond.LessEqualThan("time", to),
+			cond.NotEqual("q_type", "PTR"),
 		)
+
+	if len(categories) > 0 {
+		ctgs := []any{}
+		for _, c := range categories {
+			ctgs = append(ctgs, c)
+		}
+
+		where.AddWhereExpr(
+			cond.Args,
+			cond.In("dc.category", ctgs...),
+		)
+	}
 
 	sb.Select("sa.domain", "SUM(count) as count").
 		From("stats_aggregated sa").
