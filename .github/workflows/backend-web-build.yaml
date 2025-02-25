@@ -64,12 +64,11 @@ jobs:
       - name: Create PR
         uses: peter-evans/create-pull-request@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_PAT }}
           commit-message: Update backend image
           title: Update backend image
           body: Update backend image
           branch: ci-update-backend-image
           base: main
           labels: ci
-          reviewers: orion-tec
-          assignees: orion-tec
+          path: k8s-state
