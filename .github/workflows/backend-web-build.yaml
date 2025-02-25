@@ -44,6 +44,7 @@ jobs:
         with:
           repository: orion-tec/k8s-state
           token: ${{ secrets.GH_PAT }}
+          path: k8s-state
 
       - name: Update deployment
         run: |
