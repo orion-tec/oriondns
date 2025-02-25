@@ -54,8 +54,8 @@ jobs:
         run: |
           git config --global user.email "ci@oriontec.dev"
           git config --global user.name "CI"
-          git checkout -b "ci-update-backend-${{ github.sha }}"
-          git push --set-upstream origin ci-update-backend-image
+          git checkout -b ci-update-backend-${{ github.sha }}
+          git push --set-upstream origin ci-update-backend-${{ github.sha }}
           git add .
           git commit -m "Update backend image"
           git push
