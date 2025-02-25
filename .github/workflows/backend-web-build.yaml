@@ -48,7 +48,7 @@ jobs:
 
       - name: Update deployment
         run: |
-          sed -i "s|image: us-east1-docker.pkg.dev/oriontec-422114/oriondns/backend-web:.*|image: us-east1-docker.pkg.dev/oriontec-422114/oriondns/backend-web:${{ steps.meta.outputs.tags }}|g" k8s-state/testing/12-oriondns.yaml
+          sed -i "s|image: us-east1-docker.pkg.dev/oriontec-422114/oriondns/backend-web:.*|image: ${{ steps.meta.outputs.tags }}|g" k8s-state/testing/12-oriondns.yaml
 
       - name: Commit and push
         working-directory: k8s-state
@@ -56,6 +56,7 @@ jobs:
           git config --global user.email "ci@oriontec.dev"
           git config --global user.name "CI"
           git checkout -b ci-update-backend-image
+          git push --set-upstream origin ci-update-backend-image
           git add .
           git commit -m "Update backend image"
           git push
