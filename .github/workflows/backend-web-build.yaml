@@ -1,3 +1,4 @@
+---
 name: Build backend image
 
 on:
@@ -7,6 +8,7 @@ on:
     paths:
       - backend/**
       - Dockerfile-web-backend
+      - .github/workflows/backend-web-build.yaml
 
 jobs:
   docker:
@@ -40,3 +42,24 @@ jobs:
           push: true
           file: Dockerfile-web-backend
           tags: ${{ steps.meta.outputs.tags }}
+
+      - uses: actions/checkout@v4
+        with:
+          repository: orion-tec/k8s-state
+          token: ${{ secrets.GH_PAT }}
+          path: k8s-state
+
+      - name: Update deployment
+        run: |
+          sed -i "s|image: us-east1-docker.pkg.dev/oriontec-422114/oriondns/backend-web:.*|image: ${{ steps.meta.outputs.tags }}|g" k8s-state/testing/12-oriondns.yaml
+      - name: Create PR
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.GH_PAT }}
+          commit-message: Update backend image
+          title: Update backend image
+          body: Update backend image
+          branch: ci-update-backend-${{ github.sha }}
+          base: main
+          labels: ci
+          path: k8s-state
