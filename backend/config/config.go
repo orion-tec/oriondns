@@ -18,7 +18,6 @@ type Config struct {
 }
 
 func New() *Config {
-
 	config := flag.String("config", "config.yaml", "path to config file")
 	flag.Parse()
 

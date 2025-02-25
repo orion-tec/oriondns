@@ -2,8 +2,6 @@ name: Build backend image
 
 on:
   push:
-    branches:
-      - main
     paths:
       - backend/**
       - Dockerfile-web-backend
