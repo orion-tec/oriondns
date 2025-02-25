@@ -55,7 +55,7 @@ jobs:
         run: |
           git config --global user.email "ci@oriontec.dev"
           git config --global user.name "CI"
-          git checkout -b ci-update-backend-image
+          git checkout -b ci-update-backend-{{ github.head_ref }}
           git push --set-upstream origin ci-update-backend-image
           git add .
           git commit -m "Update backend image"
@@ -68,7 +68,7 @@ jobs:
           commit-message: Update backend image
           title: Update backend image
           body: Update backend image
-          branch: ci-update-backend-image
+          branch: ci-update-backend-{{ github.head_ref }}
           base: main
           labels: ci
           path: k8s-state
