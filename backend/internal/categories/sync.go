@@ -78,7 +78,9 @@ func (s *syncer) Sync() error {
 		log.Printf("Processing domain %s\n", domain.Domain)
 		query := fmt.Sprintf(`
 			Considering domain %s, which content category from these listed below you think is a fit?
-			Answer me only with a json with a 'category' key and an array with sanitized categories all in lower case, with spaces replaced with underscore and ordered by relevance without markdown. Consides maximum 3 categories.
+			Answer me only with a json with a 'category' key and an array with sanitized categories all
+			in lower case, with spaces replaced with underscore and ordered by relevance without markdown.
+			Consides maximum 3 categories.
 
 			- adult
 			- advertisements
