@@ -17,16 +17,20 @@ type statsDB struct {
 
 type DB interface {
 	Insert(ctx context.Context, t time.Time, domain, domainType string) error
-	GetMostUsedDomains(ctx context.Context, from, to time.Time, categories []string, limit int) ([]MostUsedDomainResponse, error)
-	GetUsedDomainsByTimeAggregation(ctx context.Context, from, to time.Time, domains []string) ([]MostUsedDomainResponse, error)
-	GetMostUsedDomainsByTimeAggregation(ctx context.Context, from, to time.Time, categories []string) ([]MostUsedDomainResponse, error)
+	GetMostUsedDomains(ctx context.Context, from, to time.Time, categories []string,
+		limit int) ([]MostUsedDomainResponse, error)
+	GetUsedDomainsByTimeAggregation(ctx context.Context, from, to time.Time,
+		domains []string) ([]MostUsedDomainResponse, error)
+	GetMostUsedDomainsByTimeAggregation(ctx context.Context, from, to time.Time,
+		categories []string) ([]MostUsedDomainResponse, error)
 }
 
 func New(db *db.DB) DB {
 	return &statsDB{db}
 }
 
-func (s *statsDB) GetMostUsedDomainsByTimeAggregation(ctx context.Context, from, to time.Time, categories []string) ([]MostUsedDomainResponse, error) {
+func (s *statsDB) GetMostUsedDomainsByTimeAggregation(ctx context.Context, from, to time.Time,
+	categories []string) ([]MostUsedDomainResponse, error) {
 	domains, err := s.GetMostUsedDomains(ctx, from, to, categories, 10)
 	if err != nil {
 		return nil, err
@@ -40,7 +44,8 @@ func (s *statsDB) GetMostUsedDomainsByTimeAggregation(ctx context.Context, from,
 	return s.GetUsedDomainsByTimeAggregation(ctx, from, to, domainsNames)
 }
 
-func (s *statsDB) GetUsedDomainsByTimeAggregation(ctx context.Context, from, to time.Time, domains []string) ([]MostUsedDomainResponse, error) {
+func (s *statsDB) GetUsedDomainsByTimeAggregation(ctx context.Context, from, to time.Time,
+	domains []string) ([]MostUsedDomainResponse, error) {
 	query := `
 			SELECT domain, SUM(count) as count
       FROM stats_aggregated
@@ -66,7 +71,8 @@ func (s *statsDB) GetUsedDomainsByTimeAggregation(ctx context.Context, from, to 
 	return res, nil
 }
 
-func (s *statsDB) GetMostUsedDomains(ctx context.Context, from, to time.Time, categories []string, limit int) ([]MostUsedDomainResponse, error) {
+func (s *statsDB) GetMostUsedDomains(ctx context.Context, from, to time.Time,
+	categories []string, limit int) ([]MostUsedDomainResponse, error) {
 	sb := sqlbuilder.PostgreSQL.NewSelectBuilder()
 
 	cond := sqlbuilder.NewCond()
