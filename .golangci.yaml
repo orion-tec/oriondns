@@ -2,13 +2,19 @@
 run:
   timeout: 5m
 linters:
-  # Disable all the default linters until issues found by these are dealt with.
   disable-all: true
   enable:
     - goimports
     - govet
     - typecheck
     - errcheck
+    - lll
+    - ineffassign
+    - staticcheck
+    - sqlclosecheck
+    - rowserrcheck
+    - prealloc
+    - gocyclo
 linters-settings:
   goimports:
-    local-prefixes: github.com/orion-tec/oriondns
+    local-prefixes: vezu-saas
