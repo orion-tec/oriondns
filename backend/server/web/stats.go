@@ -2,17 +2,11 @@ package web
 
 import (
 	"context"
-	"encoding/json"
-	"io"
-	"log"
 	"net/http"
 	"time"
-)
 
-type MostUsedDomainsRequest struct {
-	Range      string   `json:"range"`
-	Categories []string `json:"categories"`
-}
+	"github.com/orion-tec/oriondns/internal/dto"
+)
 
 func getTo(rng string) time.Time {
 	now := time.Now()
@@ -48,18 +42,10 @@ func getFrom(rng string) time.Time {
 func (h *HTTP) getMostUsedDomainsDashboard(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 
-	data, err := io.ReadAll(r.Body)
+	var req dto.GetMostUsedDomainsRequest
+	err := readFromJSON(r, &req)
 	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	var req MostUsedDomainsRequest
-	err = json.Unmarshal(data, &req)
-	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
+		logAndWriteError(w, err)
 		return
 	}
 
@@ -68,22 +54,9 @@ func (h *HTTP) getMostUsedDomainsDashboard(w http.ResponseWriter, r *http.Reques
 
 	results, err := h.stats.GetMostUsedDomains(context.Background(), from, to, req.Categories, 10)
 	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
+		logAndWriteError(w, err)
 		return
 	}
 
-	data, err = json.Marshal(results)
-	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(data)
-	if err != nil {
-		log.Println(err)
-	}
-
+	responseWithJSON(w, results)
 }
