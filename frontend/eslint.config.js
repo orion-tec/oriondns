@@ -46,7 +46,7 @@ export default tseslint.config([
             "EVENTS", // @click, @change
             "CONTENT", // v-html, v-text
           ],
-          alphabetical: false,
+          alphabetical: true,
         },
       ],
     },
