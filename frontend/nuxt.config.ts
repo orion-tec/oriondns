@@ -8,7 +8,7 @@ export default defineNuxtConfig({
   modules: [
     (_options, nuxt) => {
       nuxt.hooks.hook("vite:extendConfig", (config) => {
-        // @ts-expect-error
+        // @ts-expect-error I dont remember why this is needed
         config.plugins.push(vuetify({ autoImport: true }));
       });
     },
