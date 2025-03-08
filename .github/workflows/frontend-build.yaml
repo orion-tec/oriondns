@@ -8,6 +8,7 @@ on:
     paths:
       - frontend/**
       - Dockerfile-frontend
+      - .github/workflows/frontend-build.yaml
 
 jobs:
   docker:
@@ -55,9 +56,9 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.GH_PAT }}
-          commit-message: Update frontend image
-          title: Update frontend image
-          body: Update frontend image
+          commit-message: ${{ github.event.push.head_commit.message }}
+          title: ${{ github.event.push.head_commit.message }}
+          body: ${{ github.event.push.head_commit.message }}
           branch: ci-update-frontend-${{ github.sha }}
           base: main
           labels: ci
