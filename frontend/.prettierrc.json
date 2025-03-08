@@ -5,9 +5,5 @@
   "singleQuote": false,
   "printWidth": 100,
   "trailingComma": "all",
-  "singleAttributePerLine": true,
-  "plugins": ["prettier-plugin-organize-attributes", "@trivago/prettier-plugin-sort-imports"],
-  "importOrder": ["^vue(.*)$", "^@/stores/(.*)$", "^@/composables/(.*)$", "^@/utils/(.*)$", "^@/services/(.*)$", "^@/components/(.*)$", "^@/components/icons/(.*)$",  "^[./]"],
-  "importOrderSeparation": true,
-  "importOrderSortSpecifiers": true
+  "singleAttributePerLine": true
 }

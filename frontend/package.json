@@ -7,7 +7,8 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix"
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
@@ -22,6 +23,10 @@
     "vue-router": "latest"
   },
   "devDependencies": {
+    "@eslint/compat": "^1.2.7",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "eslint-plugin-vue": "^10.0.0",
+    "typescript-eslint": "^8.26.0",
     "vite-plugin-vuetify": "^2.1.0",
     "vuetify": "^3.7.12"
   }

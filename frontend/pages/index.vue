@@ -1,14 +1,18 @@
 <script setup lang="ts">
+import { computed, ref } from "vue";
+
 import "echarts";
 import { getMostUsedDomains } from "~/services/dashboard";
 
-import { computed, ref } from "vue";
-
-const selectedRange = ref<any>("Today");
+const selectedRange = ref<string>("Today");
 const selectedCategories = ref<string[]>([]);
 
 const { data: mostUsedDomains, status: statusMostUsedDomains } = await useAsyncData(
-  () => getMostUsedDomains(selectedRange.value, selectedCategories.value),
+  () =>
+    getMostUsedDomains({
+      categories: selectedCategories.value,
+      range: selectedRange.value,
+    }),
   {
     server: false,
     watch: [selectedRange, selectedCategories],
@@ -16,8 +20,8 @@ const { data: mostUsedDomains, status: statusMostUsedDomains } = await useAsyncD
 );
 
 const option = computed(() => {
-  const dimensions = mostUsedDomains.value ? mostUsedDomains.value?.map((i: any) => i.domain) : [];
-  const counts = mostUsedDomains.value ? mostUsedDomains.value?.map((i: any) => i.count) : [];
+  const dimensions = mostUsedDomains.value ? mostUsedDomains.value?.map((i) => i.domain) : [];
+  const counts = mostUsedDomains.value ? mostUsedDomains.value?.map((i) => i.count) : [];
 
   return {
     xAxis: {
@@ -46,21 +50,21 @@ const option = computed(() => {
 <template>
   <div class="filter-container">
     <v-select
+      v-model="selectedRange"
       width="100%"
       label="Range"
       :items="['Last month', 'Last 2 weeks', 'Last week', 'Last 3 days', 'Yesterday', 'Today']"
       variant="underlined"
-      v-model="selectedRange"
-    ></v-select>
+    />
     <v-select
+      v-model="selectedCategories"
       width="100%"
       label="Category"
       :items="getDomainCategories()"
       variant="underlined"
-      v-model="selectedCategories"
       multiple
       chips
-    ></v-select>
+    />
   </div>
   <div class="dashboard-container">
     <v-sheet
@@ -69,8 +73,8 @@ const option = computed(() => {
       width="80%"
     >
       <VChart
-        :option="option"
         v-if="statusMostUsedDomains === 'success'"
+        :option="option"
       />
     </v-sheet>
     <v-sheet
@@ -79,8 +83,8 @@ const option = computed(() => {
       width="80%"
     >
       <VChart
-        :option="option"
         v-if="statusMostUsedDomains === 'success'"
+        :option="option"
       />
     </v-sheet>
   </div>
