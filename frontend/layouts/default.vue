@@ -1,8 +1,8 @@
 <template>
   <v-layout class="rounded rounded-md">
     <v-app-bar
-      title="Orion DNS"
       :elevation="1"
+      title="Orion DNS"
     />
 
     <v-navigation-drawer
@@ -12,9 +12,9 @@
       <v-list>
         <v-list-item
           prepend-icon="mdi-view-dashboard"
-          to="/dashboard"
-          title="Dashboard"
           subtitle="View your data"
+          title="Dashboard"
+          to="/dashboard"
         />
       </v-list>
     </v-navigation-drawer>
