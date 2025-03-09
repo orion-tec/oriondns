@@ -54,6 +54,9 @@ jobs:
           token: ${{ secrets.GH_PAT }}
           path: k8s-state
 
+      - name: Print Github context in JSON format
+        run: echo '${{ toJson(github) }}'
+
       - name: Update deployment
         run: |
           sed -i "s|image: us-east1-docker.pkg.dev/oriontec-422114/oriondns/frontend:.*|image: ${{ steps.meta.outputs.tags }}|g" k8s-state/testing/12-oriondns.yaml
