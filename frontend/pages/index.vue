@@ -103,7 +103,7 @@ watch(
       v-if="statusMostUsedDomains === 'success'"
       elevation="4"
       height="300"
-      width="80%"
+      width="100%"
     >
       <VChart :option="option" />
     </v-sheet>
@@ -115,9 +115,11 @@ watch(
   padding: 10px;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
   gap: 20px;
+  width: 80%;
+  margin: auto;
 }
 
 .filter-container {
@@ -128,5 +130,17 @@ watch(
   gap: 20px;
   width: 80%;
   margin: auto;
+  margin-top: 30px;
+}
+
+@media (max-width: 768px) {
+  .filter-container {
+    flex-direction: column;
+    width: 90%;
+  }
+
+  .dashboard-container {
+    width: 90%;
+  }
 }
 </style>
