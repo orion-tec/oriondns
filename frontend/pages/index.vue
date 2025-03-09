@@ -57,7 +57,7 @@ const serverUsageByTimeRangeOption = computed(() => {
       axisLabel: { color: "white" },
       nameTextStyle: { color: "white" },
     },
-    series: [{ type: "bar", data: counts }],
+    series: [{ type: "line", data: counts }],
     tooltip: {},
     legend: {},
   };
