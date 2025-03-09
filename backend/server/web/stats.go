@@ -58,5 +58,13 @@ func (h *HTTP) getMostUsedDomainsDashboard(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	responseWithJSON(w, results)
+	transformedResult := make([]dto.GetMostUsedDomainsResponse, len(results))
+	for i, r := range results {
+		transformedResult[i] = dto.GetMostUsedDomainsResponse{
+			Domain: r.Domain,
+			Count:  r.Count,
+		}
+	}
+
+	responseWithJSON(w, transformedResult)
 }
