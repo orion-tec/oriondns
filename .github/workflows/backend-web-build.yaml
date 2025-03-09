@@ -24,6 +24,11 @@ jobs:
           username: _json_key
           password: ${{ secrets.GOOGLE_CREDENTIALS }}
 
+      - name: Split title for PR
+        id: split-title
+        run: |
+          echo "pr-title=$(echo ${{ github.event.head_commit.title }} | head -n 1)" >> "$GITHUB_OUTPUT"
+
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
@@ -53,11 +58,6 @@ jobs:
       - name: Update deployment
         run: |
           sed -i "s|image: us-east1-docker.pkg.dev/oriontec-422114/oriondns/backend-web:.*|image: ${{ steps.meta.outputs.tags }}|g" k8s-state/testing/12-oriondns.yaml
-
-      - name: Split title for PR
-        id: split-title
-        run: |
-          echo 'pr-title=$(echo "${{ github.event.head_commit.title }}" | head -n 1)' >> "$GITHUB_OUTPUT"
 
       - name: Create PR
         uses: peter-evans/create-pull-request@v3
