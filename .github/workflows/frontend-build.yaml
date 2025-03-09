@@ -1,5 +1,5 @@
 ---
-name: Build frontend image
+name: Build frontend image and create PR
 
 on:
   push:
@@ -11,7 +11,7 @@ on:
       - .github/workflows/frontend-build.yaml
 
 jobs:
-  docker:
+  build-and-create-pr:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

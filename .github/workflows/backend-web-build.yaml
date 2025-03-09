@@ -1,17 +1,18 @@
 ---
-name: Build backend image
+name: Build backend image and create PR
 
 on:
   push:
     branches:
       - main
+      - set-created-pr-name
     paths:
       - backend/**
       - Dockerfile-web-backend
       - .github/workflows/backend-web-build.yaml
 
 jobs:
-  docker:
+  build-and-create-pr:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -52,13 +53,19 @@ jobs:
       - name: Update deployment
         run: |
           sed -i "s|image: us-east1-docker.pkg.dev/oriontec-422114/oriondns/backend-web:.*|image: ${{ steps.meta.outputs.tags }}|g" k8s-state/testing/12-oriondns.yaml
+
+      - name: Split title for PR
+        id: split-title
+        run: |
+          echo 'pr-title=$(echo "${{ github.event.head_commit.title }}" | head -n 1)' >> "$GITHUB_OUTPUT"
+
       - name: Create PR
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.GH_PAT }}
-          commit-message: Update backend image
-          title: Update backend image
-          body: Update backend image
+          commit-message: ${{ steps.split-title.outputs.pr-title }}
+          title: ${{ steps.split-title.outputs.pr-title }}
+          body: ${{ steps.split-title.outputs.pr-title }}
           branch: ci-update-backend-${{ github.sha }}
           base: main
           labels: ci
