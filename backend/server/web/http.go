@@ -15,9 +15,14 @@ type HTTP struct {
 	s *http.Server
 }
 
-func New(lc fx.Lifecycle, stats stats.DB) *HTTP {
+type HttpDeps struct {
+	fx.In
+	Stats stats.DB
+}
+
+func New(lc fx.Lifecycle, deps HttpDeps) *HTTP {
 	httpStruct := HTTP{
-		stats: stats,
+		stats: deps.Stats,
 	}
 
 	lc.Append(fx.Hook{
