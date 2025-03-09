@@ -11,3 +11,11 @@ export interface GetMostUsedDomainsResponse {
   domain: string;
   count: number /* int */;
 }
+export interface GetServerUsageByTimeRangeRequest {
+  range: string;
+  categories: string[];
+}
+export interface GetServerUsageByTimeRangeResponse {
+  timeRange: string;
+  count: number /* int */;
+}

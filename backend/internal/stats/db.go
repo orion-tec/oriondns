@@ -2,6 +2,7 @@ package stats
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/jackc/pgx/v5"
@@ -23,6 +24,8 @@ type DB interface {
 		domains []string) ([]MostUsedDomainResponse, error)
 	GetMostUsedDomainsByTimeAggregation(ctx context.Context, from, to time.Time,
 		categories []string) ([]MostUsedDomainResponse, error)
+	GetServerUsageByTimeRange(ctx context.Context, from, to time.Time, categories []string) (
+		[]ServerUsageByTimeRangeResponse, error)
 }
 
 func New(db *db.DB) DB {
@@ -133,4 +136,49 @@ func (s *statsDB) Insert(ctx context.Context, t time.Time, domain, domainType st
 	}
 
 	return nil
+}
+
+func (s *statsDB) GetServerUsageByTimeRange(ctx context.Context, from time.Time, to time.Time,
+	categories []string) ([]ServerUsageByTimeRangeResponse, error) {
+	sb := sqlbuilder.PostgreSQL.NewSelectBuilder()
+
+	cond := sqlbuilder.NewCond()
+	where := sqlbuilder.NewWhereClause().
+		AddWhereExpr(cond.Args,
+			cond.GreaterEqualThan("time", from),
+			cond.LessEqualThan("time", to),
+		)
+
+	if len(categories) > 0 {
+		ctgs := []any{}
+		for _, c := range categories {
+			ctgs = append(ctgs, c)
+		}
+
+		where.AddWhereExpr(
+			cond.Args,
+			cond.In("dc.category", ctgs...),
+		)
+	}
+
+	sb.Select("to_char(time, 'YYYY-MM-DD HH24:MI') as time_range", "SUM(count) as count").
+		From("stats_aggregated sa").
+		Join("domain_categories dc on dc.domain = sa.domain").
+		GroupBy("time_range").
+		OrderBy("time_range")
+	sb.WhereClause = where
+
+	query, args := sb.Build()
+	fmt.Println(query, args)
+	rows, err := s.db.Query(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := pgx.CollectRows(rows, pgx.RowToStructByName[ServerUsageByTimeRangeResponse])
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
 }

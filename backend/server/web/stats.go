@@ -40,8 +40,6 @@ func getFrom(rng string) time.Time {
 }
 
 func (h *HTTP) getMostUsedDomainsDashboard(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
-
 	var req dto.GetMostUsedDomainsRequest
 	err := readFromJSON(r, &req)
 	if err != nil {
@@ -63,6 +61,34 @@ func (h *HTTP) getMostUsedDomainsDashboard(w http.ResponseWriter, r *http.Reques
 		transformedResult[i] = dto.GetMostUsedDomainsResponse{
 			Domain: r.Domain,
 			Count:  r.Count,
+		}
+	}
+
+	responseWithJSON(w, transformedResult)
+}
+
+func (h *HTTP) getServerUsageByTimeRangeDashboard(w http.ResponseWriter, r *http.Request) {
+	var req dto.GetServerUsageByTimeRangeRequest
+	err := readFromJSON(r, &req)
+	if err != nil {
+		logAndWriteError(w, err)
+		return
+	}
+
+	to := getTo(req.Range)
+	from := getFrom(req.Range)
+
+	results, err := h.stats.GetServerUsageByTimeRange(context.Background(), from, to, req.Categories)
+	if err != nil {
+		logAndWriteError(w, err)
+		return
+	}
+
+	transformedResult := make([]dto.GetServerUsageByTimeRangeResponse, len(results))
+	for i, r := range results {
+		transformedResult[i] = dto.GetServerUsageByTimeRangeResponse{
+			TimeRange: r.TimeRange,
+			Count:     r.Count,
 		}
 	}
 

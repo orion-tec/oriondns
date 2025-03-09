@@ -2,7 +2,7 @@
 import { computed, ref } from "vue";
 
 import "echarts";
-import { getMostUsedDomains } from "~/services/dashboard";
+import { getMostUsedDomains, getServerUsageByTimeRange } from "~/services/dashboard";
 
 const selectedRange = ref<string>("Today");
 const selectedCategories = ref<string[]>([]);
@@ -20,7 +20,50 @@ const { data: mostUsedDomains, status: statusMostUsedDomains } = await useAsyncD
   },
 );
 
-const option = computed(() => {
+const { data: serverUsageByTimeRange, status: statusServerUsageByTimeRange } = await useAsyncData(
+  () =>
+    getServerUsageByTimeRange({
+      categories: selectedCategories.value,
+      range: selectedRange.value,
+    }),
+  {
+    server: false,
+    watch: [selectedRange, selectedCategories],
+  },
+);
+
+const serverUsageByTimeRangeOption = computed(() => {
+  const dimensions = serverUsageByTimeRange.value
+    ? serverUsageByTimeRange.value?.map((i) => i.timeRange)
+    : [];
+  const counts = serverUsageByTimeRange.value
+    ? serverUsageByTimeRange.value?.map((i) => i.count)
+    : [];
+
+  return {
+    xAxis: {
+      type: "category",
+      data: dimensions,
+      nameTextStyle: { color: "white" },
+      axisLabel: {
+        rotate: 30,
+        color: "white",
+        overflow: "truncate",
+        width: "95",
+      },
+    },
+    yAxis: {
+      type: "value",
+      axisLabel: { color: "white" },
+      nameTextStyle: { color: "white" },
+    },
+    series: [{ type: "bar", data: counts }],
+    tooltip: {},
+    legend: {},
+  };
+});
+
+const mostUsedDomainsOption = computed(() => {
   const dimensions = mostUsedDomains.value ? mostUsedDomains.value?.map((i) => i.domain) : [];
   const counts = mostUsedDomains.value ? mostUsedDomains.value?.map((i) => i.count) : [];
 
@@ -105,7 +148,15 @@ watch(
       height="300"
       width="100%"
     >
-      <VChart :option="option" />
+      <VChart :option="mostUsedDomainsOption" />
+    </v-sheet>
+    <v-sheet
+      v-if="statusServerUsageByTimeRange === 'success'"
+      elevation="4"
+      height="300"
+      width="100%"
+    >
+      <VChart :option="serverUsageByTimeRangeOption" />
     </v-sheet>
   </div>
 </template>
