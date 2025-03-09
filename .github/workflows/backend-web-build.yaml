@@ -24,6 +24,9 @@ jobs:
           username: _json_key
           password: ${{ secrets.GOOGLE_CREDENTIALS }}
 
+      - name: Print Github context in JSON format
+        run: echo '${{ toJson(github) }}'
+
       - name: Split title for PR
         id: split-title
         run: |
