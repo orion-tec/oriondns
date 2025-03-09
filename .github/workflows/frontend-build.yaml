@@ -1,5 +1,5 @@
 ---
-name: Build frontend image
+name: Build frontend image and create PR
 
 on:
   push:
@@ -11,7 +11,7 @@ on:
       - .github/workflows/frontend-build.yaml
 
 jobs:
-  docker:
+  build-and-create-pr:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,6 +22,11 @@ jobs:
           registry: us-east1-docker.pkg.dev
           username: _json_key
           password: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+      - name: Split title for PR
+        id: split-title
+        run: |
+          echo "pr-title=$(echo "${{ github.event.head_commit.message }}" | head -n 1)" >> "$GITHUB_OUTPUT"
 
       - name: Docker meta
         id: meta
@@ -59,9 +64,9 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.GH_PAT }}
-          commit-message: ${{ github.event.push.head_commit.message }}
-          title: ${{ github.event.push.head_commit.message }}
-          body: ${{ github.event.push.head_commit.message }}
+          commit-message: ${{ steps.split-title.outputs.pr-title }}
+          title: ${{ steps.split-title.outputs.pr-title }}
+          body: ${{ steps.split-title.outputs.pr-title }}
           branch: ci-update-frontend-${{ github.sha }}
           base: main
           labels: ci
