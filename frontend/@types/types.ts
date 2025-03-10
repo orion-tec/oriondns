@@ -6,7 +6,7 @@
 export interface GetMostUsedDomainsRequest {
   range: string;
   categories: string[];
-  timezone: string;
+  tzOffset: number /* int */;
 }
 export interface GetMostUsedDomainsResponse {
   domain: string;
@@ -15,7 +15,7 @@ export interface GetMostUsedDomainsResponse {
 export interface GetServerUsageByTimeRangeRequest {
   range: string;
   categories: string[];
-  timezone: string;
+  tzOffset: number /* int */;
 }
 export interface GetServerUsageByTimeRangeResponse {
   timeRange: string;

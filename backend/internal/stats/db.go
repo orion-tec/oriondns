@@ -2,7 +2,6 @@ package stats
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/jackc/pgx/v5"
@@ -107,7 +106,6 @@ func (s *statsDB) GetMostUsedDomains(ctx context.Context, from, to time.Time,
 	sb.WhereClause = where
 
 	query, args := sb.Build()
-	fmt.Println(query, args)
 	rows, err := s.db.Query(ctx, query, args...)
 	if err != nil {
 		return nil, err

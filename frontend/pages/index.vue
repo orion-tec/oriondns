@@ -13,7 +13,7 @@ const { data: mostUsedDomains, status: statusMostUsedDomains } = await useAsyncD
     getMostUsedDomains({
       categories: selectedCategories.value,
       range: selectedRange.value,
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      tzOffset: new Date().getTimezoneOffset(),
     }),
   {
     server: false,
@@ -26,7 +26,7 @@ const { data: serverUsageByTimeRange, status: statusServerUsageByTimeRange } = a
     getServerUsageByTimeRange({
       categories: selectedCategories.value,
       range: selectedRange.value,
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      tzOffset: new Date().getTimezoneOffset(),
     }),
   {
     server: false,
