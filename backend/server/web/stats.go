@@ -47,11 +47,8 @@ func (h *HTTP) getMostUsedDomainsDashboard(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	to := getTo(req.Range)
 	from := getFrom(req.Range)
-
-	to = to.UTC()
-	from = from.UTC()
+	to := getTo(req.Range)
 
 	results, err := h.stats.GetMostUsedDomains(context.Background(), from, to, req.Categories, 10)
 	if err != nil {
@@ -78,11 +75,8 @@ func (h *HTTP) getServerUsageByTimeRangeDashboard(w http.ResponseWriter, r *http
 		return
 	}
 
-	to := getTo(req.Range)
 	from := getFrom(req.Range)
-
-	to = to.UTC()
-	from = from.UTC()
+	to := getTo(req.Range)
 
 	results, err := h.stats.GetServerUsageByTimeRange(context.Background(), from, to, req.Categories)
 	if err != nil {
