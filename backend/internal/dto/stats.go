@@ -3,7 +3,7 @@ package dto
 type GetMostUsedDomainsRequest struct {
 	Range      string   `json:"range"`
 	Categories []string `json:"categories"`
-	Timezone   string   `json:"timezone"`
+	TzOffset   int      `json:"tzOffset"`
 }
 
 type GetMostUsedDomainsResponse struct {
@@ -14,7 +14,7 @@ type GetMostUsedDomainsResponse struct {
 type GetServerUsageByTimeRangeRequest struct {
 	Range      string   `json:"range"`
 	Categories []string `json:"categories"`
-	Timezone   string   `json:"timezone"`
+	TzOffset   int      `json:"tzOffset"`
 }
 
 type GetServerUsageByTimeRangeResponse struct {

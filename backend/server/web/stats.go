@@ -2,7 +2,6 @@ package web
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -51,13 +50,8 @@ func (h *HTTP) getMostUsedDomainsDashboard(w http.ResponseWriter, r *http.Reques
 	from := getFrom(req.Range)
 	to := getTo(req.Range)
 
-	loc, err := time.LoadLocation(req.Timezone)
-	if err == nil {
-		to = to.In(loc)
-		from = from.In(loc)
-	} else {
-		fmt.Println(err)
-	}
+	from = from.Add(time.Duration(req.TzOffset) * time.Minute)
+	to = to.Add(time.Duration(req.TzOffset) * time.Minute)
 
 	results, err := h.stats.GetMostUsedDomains(context.Background(), from, to, req.Categories, 10)
 	if err != nil {
@@ -87,13 +81,8 @@ func (h *HTTP) getServerUsageByTimeRangeDashboard(w http.ResponseWriter, r *http
 	from := getFrom(req.Range)
 	to := getTo(req.Range)
 
-	loc, err := time.LoadLocation(req.Timezone)
-	if err == nil {
-		to = to.In(loc)
-		from = from.In(loc)
-	} else {
-		fmt.Println(err)
-	}
+	from = from.Add(time.Duration(req.TzOffset) * time.Minute)
+	to = to.Add(time.Duration(req.TzOffset) * time.Minute)
 
 	results, err := h.stats.GetServerUsageByTimeRange(context.Background(), from, to, req.Categories)
 	if err != nil {
