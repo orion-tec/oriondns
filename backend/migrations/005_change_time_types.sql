@@ -1,0 +1,23 @@
+ALTER TABLE blocked_domains ALTER COLUMN created_at TYPE TIMESTAMPTZ;
+ALTER TABLE blocked_domains ALTER COLUMN updated_at TYPE TIMESTAMPTZ;
+ALTER TABLE blocked_domains ALTER COLUMN deleted_at TYPE TIMESTAMPTZ;
+
+ALTER TABLE domains ALTER COLUMN created_at TYPE TIMESTAMPTZ;
+ALTER TABLE domains ALTER COLUMN updated_at TYPE TIMESTAMPTZ;
+
+ALTER TABLE stats_aggregated ALTER COLUMN time TYPE TIMESTAMPTZ;
+ALTER TABLE stats_aggregated ALTER COLUMN created_at TYPE TIMESTAMPTZ;
+ALTER TABLE stats_aggregated ALTER COLUMN updated_at TYPE TIMESTAMPTZ;
+
+---- create above / drop below ----
+
+ALTER TABLE blocked_domains ALTER COLUMN created_at TYPE TIMESTAMP;
+ALTER TABLE blocked_domains ALTER COLUMN updated_at TYPE TIMESTAMP;
+ALTER TABLE blocked_domains ALTER COLUMN deleted_at TIMESTAMP;
+
+ALTER TABLE domains ALTER COLUMN created_at TYPE TIMESTAMP;
+ALTER TABLE domains ALTER COLUMN updated_at TYPE TIMESTAMP;
+
+ALTER TABLE stats_aggregated ALTER COLUMN time TYPE TIMESTAMP;
+ALTER TABLE stats_aggregated ALTER COLUMN created_at TYPE TIMESTAMP;
+ALTER TABLE stats_aggregated ALTER COLUMN updated_at TYPE TIMESTAMP;

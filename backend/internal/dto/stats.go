@@ -1,9 +1,9 @@
 package dto
 
 type GetMostUsedDomainsRequest struct {
-	Range      string   `json:"range"`
+	From       int64    `json:"from"`
+	To         int64    `json:"to"`
 	Categories []string `json:"categories"`
-	TzOffset   int      `json:"tzOffset"`
 }
 
 type GetMostUsedDomainsResponse struct {
@@ -12,9 +12,9 @@ type GetMostUsedDomainsResponse struct {
 }
 
 type GetServerUsageByTimeRangeRequest struct {
-	Range      string   `json:"range"`
+	From       int64    `json:"from"`
+	To         int64    `json:"to"`
 	Categories []string `json:"categories"`
-	TzOffset   int      `json:"tzOffset"`
 }
 
 type GetServerUsageByTimeRangeResponse struct {
