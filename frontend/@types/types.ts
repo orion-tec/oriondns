@@ -18,6 +18,6 @@ export interface GetServerUsageByTimeRangeRequest {
   categories: string[];
 }
 export interface GetServerUsageByTimeRangeResponse {
-  timeRange: string;
+  timeRange: string /* RFC3339 */;
   count: number /* int */;
 }

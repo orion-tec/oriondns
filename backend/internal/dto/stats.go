@@ -1,5 +1,7 @@
 package dto
 
+import "time"
+
 type GetMostUsedDomainsRequest struct {
 	From       int64    `json:"from"`
 	To         int64    `json:"to"`
@@ -18,6 +20,6 @@ type GetServerUsageByTimeRangeRequest struct {
 }
 
 type GetServerUsageByTimeRangeResponse struct {
-	TimeRange string `json:"timeRange"`
-	Count     int    `json:"count"`
+	TimeRange time.Time `json:"timeRange"`
+	Count     int       `json:"count"`
 }
