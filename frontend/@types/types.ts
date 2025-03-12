@@ -4,18 +4,18 @@
 // source: stats.go
 
 export interface GetMostUsedDomainsRequest {
-  range: string;
+  from: number /* int64 */;
+  to: number /* int64 */;
   categories: string[];
-  tzOffset: number /* int */;
 }
 export interface GetMostUsedDomainsResponse {
   domain: string;
   count: number /* int */;
 }
 export interface GetServerUsageByTimeRangeRequest {
-  range: string;
+  from: number /* int64 */;
+  to: number /* int64 */;
   categories: string[];
-  tzOffset: number /* int */;
 }
 export interface GetServerUsageByTimeRangeResponse {
   timeRange: string;

@@ -4,7 +4,7 @@ import { computed, ref } from "vue";
 import "echarts";
 import { getMostUsedDomains, getServerUsageByTimeRange } from "~/services/dashboard";
 
-const selectedRange = ref<string>("Today");
+const selectedRange = ref<TimeRange>("Today");
 const selectedCategories = ref<string[]>([]);
 const isAllCategoriesSelected = ref<boolean>(true);
 
@@ -12,8 +12,8 @@ const { data: mostUsedDomains, status: statusMostUsedDomains } = await useAsyncD
   () =>
     getMostUsedDomains({
       categories: selectedCategories.value,
-      range: selectedRange.value,
-      tzOffset: new Date().getTimezoneOffset(),
+      from: timeRangeValues.value.from,
+      to: timeRangeValues.value.to,
     }),
   {
     server: false,
@@ -25,8 +25,8 @@ const { data: serverUsageByTimeRange, status: statusServerUsageByTimeRange } = a
   () =>
     getServerUsageByTimeRange({
       categories: selectedCategories.value,
-      range: selectedRange.value,
-      tzOffset: new Date().getTimezoneOffset(),
+      from: timeRangeValues.value.from,
+      to: timeRangeValues.value.to,
     }),
   {
     server: false,
@@ -34,9 +34,14 @@ const { data: serverUsageByTimeRange, status: statusServerUsageByTimeRange } = a
   },
 );
 
+const timeRangeValues = computed(() => {
+  const { from, to } = getDateFromRange(selectedRange.value);
+  return { from: from.getTime(), to: to.getTime() };
+});
+
 const serverUsageByTimeRangeOption = computed(() => {
   const dimensions = serverUsageByTimeRange.value
-    ? serverUsageByTimeRange.value?.map((i) => i.timeRange)
+    ? serverUsageByTimeRange.value?.map((i) => formatDate(dateAtCurrentTZ(i.timeRange)))
     : [];
   const counts = serverUsageByTimeRange.value
     ? serverUsageByTimeRange.value?.map((i) => i.count)

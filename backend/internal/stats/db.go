@@ -160,7 +160,7 @@ func (s *statsDB) GetServerUsageByTimeRange(ctx context.Context, from time.Time,
 		)
 	}
 
-	sb.Select("to_char(time, 'YYYY-MM-DD HH24:MI') as time_range", "SUM(count) as count").
+	sb.Select("time as time_range", "SUM(count) as count").
 		From("stats_aggregated sa").
 		Join("domain_categories dc on dc.domain = sa.domain").
 		GroupBy("time_range").
