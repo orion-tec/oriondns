@@ -23,40 +23,38 @@ export const formatDate = (date: Date) => {
 };
 
 export const getDateFromRange = (range: TimeRange): { from: Date; to: Date } => {
+  const midnight = new Date(new Date().setHours(0, 0, 0, 0));
+
   switch (range) {
     case "Last month":
       return {
-        from: dateAtUTC(new Date(new Date().setMonth(new Date().getMonth() - 1))),
+        from: dateAtUTC(new Date(midnight.setMonth(new Date().getMonth() - 1))),
         to: dateAtUTC(new Date()),
       };
     case "Last week":
       return {
-        from: dateAtUTC(new Date(new Date().setDate(new Date().getDate() - 7))),
+        from: dateAtUTC(new Date(midnight.setDate(new Date().getDate() - 7))),
         to: dateAtUTC(new Date()),
       };
     case "Last 2 weeks":
       return {
-        from: dateAtUTC(new Date(new Date().setDate(new Date().getDate() - 14))),
+        from: dateAtUTC(new Date(midnight.setDate(new Date().getDate() - 14))),
         to: dateAtUTC(new Date()),
       };
     case "Last 3 days":
       return {
-        from: dateAtUTC(new Date(new Date().setDate(new Date().getDate() - 3))),
-        to: dateAtUTC(new Date()),
-      };
-    case "Today":
-      return {
-        from: dateAtUTC(new Date(new Date().setHours(0, 0, 0, 0))),
+        from: dateAtUTC(new Date(midnight.setDate(new Date().getDate() - 3))),
         to: dateAtUTC(new Date()),
       };
     case "Yesterday":
       return {
-        from: dateAtUTC(new Date(new Date().setDate(new Date().getDate() - 1))),
-        to: dateAtUTC(new Date(new Date().setHours(0, 0, 0, 0))),
+        from: dateAtUTC(new Date(midnight.setDate(new Date().getDate() - 1))),
+        to: dateAtUTC(midnight),
       };
+    case "Today":
     default:
       return {
-        from: dateAtUTC(new Date()),
+        from: dateAtUTC(midnight),
         to: dateAtUTC(new Date()),
       };
   }
