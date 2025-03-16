@@ -2,6 +2,7 @@ package web
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -50,6 +51,8 @@ func (h *HTTP) getServerUsageByTimeRangeDashboard(w http.ResponseWriter, r *http
 
 	from := getTimeFromFE(req.From)
 	to := getTimeFromFE(req.To)
+	fmt.Println("from", from)
+	fmt.Println("to", to)
 
 	results, err := h.stats.GetServerUsageByTimeRange(context.Background(), from, to, req.Categories)
 	if err != nil {

@@ -150,20 +150,30 @@ watch(
   </div>
   <div class="dashboard-container">
     <v-sheet
-      v-if="statusMostUsedDomains === 'success'"
+      v-if="statusMostUsedDomains === 'success' || statusMostUsedDomains === 'pending'"
       elevation="4"
       height="300"
       width="100%"
     >
-      <VChart :option="mostUsedDomainsOption" />
+      <VChart
+        autoresize
+        :loading="statusMostUsedDomains === 'pending'"
+        :option="mostUsedDomainsOption"
+      />
     </v-sheet>
     <v-sheet
-      v-if="statusServerUsageByTimeRange === 'success'"
+      v-if="
+        statusServerUsageByTimeRange === 'success' || statusServerUsageByTimeRange === 'pending'
+      "
       elevation="4"
       height="300"
       width="100%"
     >
-      <VChart :option="serverUsageByTimeRangeOption" />
+      <VChart
+        autoresize
+        :loading="statusServerUsageByTimeRange === 'pending'"
+        :option="serverUsageByTimeRangeOption"
+      />
     </v-sheet>
   </div>
 </template>
