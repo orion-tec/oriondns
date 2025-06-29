@@ -1,7 +1,7 @@
 package dns
 
 import (
-	"context"
+	"strings"
 	"testing"
 	"time"
 
@@ -10,11 +10,9 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/orion-tec/oriondns/internal/blockeddomains"
-	"github.com/orion-tec/oriondns/internal/testutil"
 )
 
 func TestDNS_Integration_BlockedDomainHandling(t *testing.T) {
-	testutil.SkipIfNoDatabase(t)
 	
 	dnsHandler := createTestDNS()
 	
@@ -72,7 +70,7 @@ func TestDNS_Integration_BlockedDomainHandling(t *testing.T) {
 			for _, bds := range dnsHandler.blockedDomainsMap {
 				for _, q := range msg.Question {
 					for _, bd := range bds {
-						if bd.Recursive && dns.IsSubDomain(bd.Domain, q.Name) {
+						if bd.Recursive && strings.HasSuffix(q.Name, bd.Domain) {
 							isBlocked = true
 							break
 						}

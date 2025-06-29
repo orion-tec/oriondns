@@ -16,7 +16,7 @@ func TestDomainsDB_Insert(t *testing.T) {
 	pool := testutil.SetupTestDB(t)
 	testutil.TruncateAllTables(t, pool)
 
-	database := db.New(pool)
+	database := db.NewWithPool(pool)
 	domainsDB := New(database)
 
 	ctx := context.Background()
@@ -36,7 +36,7 @@ func TestDomainsDB_Insert_Duplicate_UpdatesUsedCount(t *testing.T) {
 	pool := testutil.SetupTestDB(t)
 	testutil.TruncateAllTables(t, pool)
 
-	database := db.New(pool)
+	database := db.NewWithPool(pool)
 	domainsDB := New(database)
 
 	ctx := context.Background()
@@ -59,7 +59,7 @@ func TestDomainsDB_GetAll(t *testing.T) {
 	pool := testutil.SetupTestDB(t)
 	testutil.TruncateAllTables(t, pool)
 
-	database := db.New(pool)
+	database := db.NewWithPool(pool)
 	domainsDB := New(database)
 
 	ctx := context.Background()
@@ -89,7 +89,7 @@ func TestDomainsDB_GetByDomain(t *testing.T) {
 	pool := testutil.SetupTestDB(t)
 	testutil.TruncateAllTables(t, pool)
 
-	database := db.New(pool)
+	database := db.NewWithPool(pool)
 	domainsDB := New(database)
 
 	ctx := context.Background()
@@ -108,7 +108,7 @@ func TestDomainsDB_GetByDomain_NotFound(t *testing.T) {
 	pool := testutil.SetupTestDB(t)
 	testutil.TruncateAllTables(t, pool)
 
-	database := db.New(pool)
+	database := db.NewWithPool(pool)
 	domainsDB := New(database)
 
 	ctx := context.Background()
@@ -124,7 +124,7 @@ func TestDomainsDB_GetDomainsWithoutCategory(t *testing.T) {
 	pool := testutil.SetupTestDB(t)
 	testutil.TruncateAllTables(t, pool)
 
-	database := db.New(pool)
+	database := db.NewWithPool(pool)
 	domainsDB := New(database)
 
 	ctx := context.Background()

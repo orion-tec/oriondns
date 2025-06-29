@@ -36,3 +36,9 @@ func New(cfg *config.Config) *DB {
 		conn,
 	}
 }
+
+func NewWithPool(pool *pgxpool.Pool) *DB {
+	return &DB{
+		pool,
+	}
+}

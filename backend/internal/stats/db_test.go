@@ -17,7 +17,7 @@ func TestStatsDB_Insert(t *testing.T) {
 	pool := testutil.SetupTestDB(t)
 	testutil.TruncateAllTables(t, pool)
 
-	database := db.New(pool)
+	database := db.NewWithPool(pool)
 	statsDB := New(database)
 
 	ctx := context.Background()
@@ -39,7 +39,7 @@ func TestStatsDB_Insert_Aggregation(t *testing.T) {
 	pool := testutil.SetupTestDB(t)
 	testutil.TruncateAllTables(t, pool)
 
-	database := db.New(pool)
+	database := db.NewWithPool(pool)
 	statsDB := New(database)
 
 	ctx := context.Background()
@@ -65,7 +65,7 @@ func TestStatsDB_GetMostUsedDomains(t *testing.T) {
 	pool := testutil.SetupTestDB(t)
 	testutil.TruncateAllTables(t, pool)
 
-	database := db.New(pool)
+	database := db.NewWithPool(pool)
 	statsDB := New(database)
 
 	ctx := context.Background()
@@ -104,7 +104,7 @@ func TestStatsDB_GetMostUsedDomains_WithCategories(t *testing.T) {
 	pool := testutil.SetupTestDB(t)
 	testutil.TruncateAllTables(t, pool)
 
-	database := db.New(pool)
+	database := db.NewWithPool(pool)
 	statsDB := New(database)
 
 	ctx := context.Background()
@@ -141,7 +141,7 @@ func TestStatsDB_GetServerUsageByTimeRange(t *testing.T) {
 	pool := testutil.SetupTestDB(t)
 	testutil.TruncateAllTables(t, pool)
 
-	database := db.New(pool)
+	database := db.NewWithPool(pool)
 	statsDB := New(database)
 
 	ctx := context.Background()
@@ -180,7 +180,7 @@ func TestStatsDB_GetUsedDomainsByTimeAggregation(t *testing.T) {
 	pool := testutil.SetupTestDB(t)
 	testutil.TruncateAllTables(t, pool)
 
-	database := db.New(pool)
+	database := db.NewWithPool(pool)
 	statsDB := New(database)
 
 	ctx := context.Background()

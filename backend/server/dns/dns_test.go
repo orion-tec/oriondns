@@ -22,8 +22,8 @@ type MockAI struct {
 	mock.Mock
 }
 
-func (m *MockAI) CategorizeURL(ctx context.Context, url string) (string, error) {
-	args := m.Called(ctx, url)
+func (m *MockAI) Query(query string) (string, error) {
+	args := m.Called(query)
 	return args.String(0), args.Error(1)
 }
 
@@ -98,6 +98,7 @@ func (m *MockStats) GetServerUsageByTimeRange(ctx context.Context, from, to time
 }
 
 func createTestDNS() *DNS {
+	mockAI := &MockAI{}
 	return &DNS{
 		cacheMap:             sync.Map{},
 		blockedDomainsMap:    make(map[string][]blockeddomains.BlockedDomain),
@@ -105,7 +106,7 @@ func createTestDNS() *DNS {
 		blockedDomains:       &MockBlockedDomains{},
 		domain:               &MockDomains{},
 		stats:                &MockStats{},
-		ai:                   &MockAI{},
+		ai:                   ai.AI(mockAI),
 	}
 }
 

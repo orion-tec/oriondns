@@ -2,15 +2,29 @@ package testutil
 
 import (
 	"time"
-
-	"github.com/orion-tec/oriondns/internal/blockeddomains"
-	"github.com/orion-tec/oriondns/internal/categories"
-	"github.com/orion-tec/oriondns/internal/domains"
-	"github.com/orion-tec/oriondns/internal/stats"
 )
 
-func NewTestBlockedDomain(domain string, recursive bool) blockeddomains.BlockedDomain {
-	return blockeddomains.BlockedDomain{
+type TestBlockedDomain struct {
+	ID        int
+	Domain    string
+	Recursive bool
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
+type TestCategory struct {
+	Category string
+}
+
+type TestDomain struct {
+	Domain    string
+	UsedCount int
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
+func NewTestBlockedDomain(domain string, recursive bool) TestBlockedDomain {
+	return TestBlockedDomain{
 		ID:        1,
 		Domain:    domain,
 		Recursive: recursive,
@@ -19,62 +33,41 @@ func NewTestBlockedDomain(domain string, recursive bool) blockeddomains.BlockedD
 	}
 }
 
-func NewTestCategory(name string) categories.Category {
-	return categories.Category{
-		ID:        1,
-		Name:      name,
+func NewTestCategory(name string) TestCategory {
+	return TestCategory{
+		Category: name,
+	}
+}
+
+func NewTestDomain(domain string) TestDomain {
+	return TestDomain{
+		Domain:    domain,
+		UsedCount: 1,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
 }
 
-func NewTestDomain(domain string, categoryID int) domains.Domain {
-	return domains.Domain{
-		ID:         1,
-		Domain:     domain,
-		CategoryID: categoryID,
-		CreatedAt:  time.Now(),
-		UpdatedAt:  time.Now(),
-	}
-}
-
-func NewTestStat(domain string, blocked bool) stats.Stat {
-	return stats.Stat{
-		ID:        1,
-		Domain:    domain,
-		Blocked:   blocked,
-		CreatedAt: time.Now(),
-	}
-}
-
-func CreateTestBlockedDomains() []blockeddomains.BlockedDomain {
-	return []blockeddomains.BlockedDomain{
+func CreateTestBlockedDomains() []TestBlockedDomain {
+	return []TestBlockedDomain{
 		NewTestBlockedDomain("malware.com", false),
 		NewTestBlockedDomain(".ads.example.com", true),
 		NewTestBlockedDomain("phishing.net", false),
 	}
 }
 
-func CreateTestCategories() []categories.Category {
-	return []categories.Category{
+func CreateTestCategories() []TestCategory {
+	return []TestCategory{
 		NewTestCategory("malware"),
 		NewTestCategory("ads"),
 		NewTestCategory("social"),
 	}
 }
 
-func CreateTestDomains() []domains.Domain {
-	return []domains.Domain{
-		NewTestDomain("google.com", 1),
-		NewTestDomain("facebook.com", 3),
-		NewTestDomain("youtube.com", 3),
-	}
-}
-
-func CreateTestStats() []stats.Stat {
-	return []stats.Stat{
-		NewTestStat("google.com", false),
-		NewTestStat("malware.com", true),
-		NewTestStat("facebook.com", false),
+func CreateTestDomains() []TestDomain {
+	return []TestDomain{
+		NewTestDomain("google.com"),
+		NewTestDomain("facebook.com"),
+		NewTestDomain("youtube.com"),
 	}
 }

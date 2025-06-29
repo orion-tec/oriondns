@@ -10,7 +10,7 @@ type GetMostUsedDomainsRequest struct {
 
 type GetMostUsedDomainsResponse struct {
 	Domain string `json:"domain"`
-	Count  int    `json:"count"`
+	Count  int64  `json:"count"`
 }
 
 type GetServerUsageByTimeRangeRequest struct {
@@ -21,5 +21,5 @@ type GetServerUsageByTimeRangeRequest struct {
 
 type GetServerUsageByTimeRangeResponse struct {
 	TimeRange time.Time `json:"timeRange"`
-	Count     int       `json:"count"`
+	Count     int64     `json:"count"`
 }

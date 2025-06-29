@@ -16,7 +16,7 @@ func TestBlockedDomainsDB_Insert(t *testing.T) {
 	pool := testutil.SetupTestDB(t)
 	testutil.TruncateAllTables(t, pool)
 
-	database := db.New(pool)
+	database := db.NewWithPool(pool)
 	blockedDomainsDB := New(database)
 
 	ctx := context.Background()
@@ -37,7 +37,7 @@ func TestBlockedDomainsDB_Insert_Recursive(t *testing.T) {
 	pool := testutil.SetupTestDB(t)
 	testutil.TruncateAllTables(t, pool)
 
-	database := db.New(pool)
+	database := db.NewWithPool(pool)
 	blockedDomainsDB := New(database)
 
 	ctx := context.Background()
@@ -58,7 +58,7 @@ func TestBlockedDomainsDB_GetAll(t *testing.T) {
 	pool := testutil.SetupTestDB(t)
 	testutil.TruncateAllTables(t, pool)
 
-	database := db.New(pool)
+	database := db.NewWithPool(pool)
 	blockedDomainsDB := New(database)
 
 	ctx := context.Background()
@@ -96,7 +96,7 @@ func TestBlockedDomainsDB_GetAll_Empty(t *testing.T) {
 	pool := testutil.SetupTestDB(t)
 	testutil.TruncateAllTables(t, pool)
 
-	database := db.New(pool)
+	database := db.NewWithPool(pool)
 	blockedDomainsDB := New(database)
 
 	ctx := context.Background()

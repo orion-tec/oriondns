@@ -20,7 +20,7 @@ func TestIntegration_FullWorkflow(t *testing.T) {
 	pool := testutil.SetupTestDB(t)
 	testutil.TruncateAllTables(t, pool)
 
-	database := db.New(pool)
+	database := db.NewWithPool(pool)
 	statsDB := stats.New(database)
 	domainsDB := domains.New(database)
 	blockedDomainsDB := blockeddomains.New(database)
@@ -79,7 +79,7 @@ func TestIntegration_StatsAggregation(t *testing.T) {
 	pool := testutil.SetupTestDB(t)
 	testutil.TruncateAllTables(t, pool)
 
-	database := db.New(pool)
+	database := db.NewWithPool(pool)
 	statsDB := stats.New(database)
 
 	ctx := context.Background()
@@ -114,7 +114,7 @@ func TestIntegration_CategoryFiltering(t *testing.T) {
 	pool := testutil.SetupTestDB(t)
 	testutil.TruncateAllTables(t, pool)
 
-	database := db.New(pool)
+	database := db.NewWithPool(pool)
 	statsDB := stats.New(database)
 
 	ctx := context.Background()
