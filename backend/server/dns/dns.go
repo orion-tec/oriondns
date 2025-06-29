@@ -79,6 +79,7 @@ func (d *DNS) handleRequest(c *dns.Client) dns.HandlerFunc {
 		}()
 
 		// Validate if it's blocked
+		d.blockedDomainsMutext.Lock()
 		isBlocked := false
 		for _, bds := range d.blockedDomainsMap {
 			for _, q := range msg.Question {
@@ -97,6 +98,7 @@ func (d *DNS) handleRequest(c *dns.Client) dns.HandlerFunc {
 				}
 			}
 		}
+		d.blockedDomainsMutext.Unlock()
 
 		if isBlocked {
 			m := new(dns.Msg)
