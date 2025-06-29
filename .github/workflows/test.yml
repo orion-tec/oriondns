@@ -197,7 +197,7 @@ jobs:
         go-version: '1.23'
     
     - name: Run Gosec Security Scanner
-      uses: securecodewarrior/github-action-gosec@v1
+      uses: cosmos/gosec@master
       with:
         args: './backend/...'
     
