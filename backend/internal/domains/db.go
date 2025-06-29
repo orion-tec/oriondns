@@ -66,7 +66,7 @@ func (b *domainsDB) Insert(ctx context.Context, domain string) error {
 	_, err := b.db.Exec(ctx, `
 		INSERT INTO domains (domain)
 			VALUES ($1)
-		ON CONFLICT(domain) DO UPDATE SET domain = $1, updated_at = now(), used_count = domains.used_count + 1
+		ON CONFLICT(domain) DO UPDATE SET domain = $1, updated_at = now(), used_count = COALESCE(domains.used_count, 0) + 1
 	`, domain)
 	if err != nil {
 		return err
