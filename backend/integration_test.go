@@ -81,10 +81,14 @@ func TestIntegration_StatsAggregation(t *testing.T) {
 
 	database := db.NewWithPool(pool)
 	statsDB := stats.New(database)
+	domainsDB := domains.New(database)
 
 	ctx := context.Background()
 
-	_, err := pool.Exec(ctx, `
+	err := domainsDB.Insert(ctx, "google.com")
+	require.NoError(t, err)
+
+	_, err = pool.Exec(ctx, `
 		INSERT INTO domain_categories (domain, category) VALUES 
 		('google.com', 'search')
 	`)
@@ -116,10 +120,18 @@ func TestIntegration_CategoryFiltering(t *testing.T) {
 
 	database := db.NewWithPool(pool)
 	statsDB := stats.New(database)
+	domainsDB := domains.New(database)
 
 	ctx := context.Background()
 
-	_, err := pool.Exec(ctx, `
+	err := domainsDB.Insert(ctx, "google.com")
+	require.NoError(t, err)
+	err = domainsDB.Insert(ctx, "facebook.com")
+	require.NoError(t, err)
+	err = domainsDB.Insert(ctx, "youtube.com")
+	require.NoError(t, err)
+
+	_, err = pool.Exec(ctx, `
 		INSERT INTO domain_categories (domain, category) VALUES 
 		('google.com', 'search'),
 		('facebook.com', 'social'),
