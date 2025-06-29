@@ -2,7 +2,9 @@ package web
 
 import (
 	"context"
+	"log"
 	"net/http"
+	"time"
 
 	"go.uber.org/fx"
 
@@ -30,9 +32,18 @@ func New(lc fx.Lifecycle, deps HttpDeps) *HTTP {
 			go func() {
 				httpStruct.setupRoutes()
 
-				err := http.ListenAndServe(":8080", nil)
+				// Create HTTP server with proper timeouts to satisfy G114
+				server := &http.Server{
+					Addr:         ":8080",
+					Handler:      nil,
+					ReadTimeout:  15 * time.Second,
+					WriteTimeout: 15 * time.Second,
+					IdleTimeout:  60 * time.Second,
+				}
+
+				err := server.ListenAndServe()
 				if err != nil {
-					panic(err)
+					log.Fatalf("HTTP server failed to start: %v", err)
 				}
 			}()
 			return nil

@@ -101,7 +101,26 @@ func (a *ai) Query(query string) (string, error) {
 		return "", err
 	}
 
-	answer := m["choices"].([]any)[0].(map[string]any)["message"].(map[string]any)["content"].(string)
+	// Safely extract the answer with proper type checking
+	choices, ok := m["choices"].([]any)
+	if !ok || len(choices) == 0 {
+		return "", fmt.Errorf("invalid response format: missing or empty choices")
+	}
 
-	return answer, nil
+	choice, ok := choices[0].(map[string]any)
+	if !ok {
+		return "", fmt.Errorf("invalid response format: choice is not a map")
+	}
+
+	message, ok := choice["message"].(map[string]any)
+	if !ok {
+		return "", fmt.Errorf("invalid response format: message is not a map")
+	}
+
+	content, ok := message["content"].(string)
+	if !ok {
+		return "", fmt.Errorf("invalid response format: content is not a string")
+	}
+
+	return content, nil
 }

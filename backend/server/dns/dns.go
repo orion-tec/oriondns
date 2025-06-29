@@ -56,6 +56,26 @@ func (d *DNS) updateBlockedDomains() {
 	}
 }
 
+func (d *DNS) checkBlockedDomains(questions []dns.Question) bool {
+	for key := range d.blockedDomainsMap {
+		bds := d.blockedDomainsMap[key]
+		for _, q := range questions {
+			for _, bd := range bds {
+				if bd.Recursive && strings.HasSuffix(q.Name, bd.Domain) {
+					fmt.Println("Blocked recursive domain: ", q.Name)
+					return true
+				}
+
+				if q.Name == bd.Domain {
+					fmt.Println("Blocked domain: ", q.Name)
+					return true
+				}
+			}
+		}
+	}
+	return false
+}
+
 func (d *DNS) handleRequest(c *dns.Client) dns.HandlerFunc {
 	return func(rw dns.ResponseWriter, msg *dns.Msg) {
 
@@ -79,25 +99,7 @@ func (d *DNS) handleRequest(c *dns.Client) dns.HandlerFunc {
 		}()
 
 		// Validate if it's blocked
-		isBlocked := false
-		for key := range d.blockedDomainsMap {
-			bds := d.blockedDomainsMap[key]
-			for _, q := range msg.Question {
-				for _, bd := range bds {
-					if bd.Recursive && strings.HasSuffix(q.Name, bd.Domain) {
-						fmt.Println("Blocked recursive domain: ", q.Name)
-						isBlocked = true
-						break
-					}
-
-					if q.Name == bd.Domain {
-						fmt.Println("Blocked domain: ", q.Name)
-						isBlocked = true
-						break
-					}
-				}
-			}
-		}
+		isBlocked := d.checkBlockedDomains(msg.Question)
 
 		if isBlocked {
 			m := new(dns.Msg)

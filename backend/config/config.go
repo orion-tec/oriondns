@@ -3,6 +3,7 @@ package config
 import (
 	"flag"
 	"fmt"
+	"log"
 	"os"
 
 	"gopkg.in/yaml.v3"
@@ -23,13 +24,13 @@ func New() *Config {
 
 	data, err := os.ReadFile(*config)
 	if err != nil {
-		panic(fmt.Sprintf("error on read config file: %s", err))
+		log.Fatalf("error on read config file: %s", err)
 	}
 
 	var confifStruct Config
 	err = yaml.Unmarshal(data, &confifStruct)
 	if err != nil {
-		panic(fmt.Sprintf("error on parse config file: %s", err))
+		log.Fatalf("error on parse config file: %s", err)
 	}
 
 	return &confifStruct
