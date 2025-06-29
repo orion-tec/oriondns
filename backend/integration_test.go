@@ -91,7 +91,7 @@ func TestIntegration_StatsAggregation(t *testing.T) {
 	require.NoError(t, err)
 
 	baseTime := time.Date(2023, 1, 1, 12, 5, 0, 0, time.UTC)
-	
+
 	err = statsDB.Insert(ctx, baseTime, "google.com", "A")
 	require.NoError(t, err)
 
@@ -128,7 +128,7 @@ func TestIntegration_CategoryFiltering(t *testing.T) {
 	require.NoError(t, err)
 
 	baseTime := time.Date(2023, 1, 1, 12, 0, 0, 0, time.UTC)
-	
+
 	_, err = pool.Exec(ctx, `
 		INSERT INTO stats_aggregated (time, domain, count, q_type) VALUES 
 		($1, 'google.com', 10, 'A'),

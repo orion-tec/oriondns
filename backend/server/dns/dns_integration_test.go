@@ -13,9 +13,9 @@ import (
 )
 
 func TestDNS_Integration_BlockedDomainHandling(t *testing.T) {
-	
+
 	dnsHandler := createTestDNS()
-	
+
 	testDomains := []blockeddomains.BlockedDomain{
 		{ID: 1, Domain: "malware.com.", Recursive: false},
 		{ID: 2, Domain: ".ads.example.com", Recursive: true},
@@ -102,7 +102,7 @@ func TestDNS_Integration_CacheEviction(t *testing.T) {
 
 	resp1 := &dns.Msg{}
 	resp1.SetReply(msg1)
-	
+
 	resp2 := &dns.Msg{}
 	resp2.SetReply(msg2)
 
@@ -193,18 +193,18 @@ func TestDNS_Integration_BlockedDomainsMapConsistency(t *testing.T) {
 	dnsHandler.updateBlockedDomainsMap(domains)
 
 	assert.Len(t, dnsHandler.blockedDomainsMap, 2)
-	
+
 	group1, exists1 := dnsHandler.blockedDomainsMap["1"]
 	require.True(t, exists1)
 	assert.Len(t, group1, 2)
-	
+
 	domainNames := make([]string, len(group1))
 	for i, bd := range group1 {
 		domainNames[i] = bd.Domain
 	}
 	assert.Contains(t, domainNames, "malware.com.")
 	assert.Contains(t, domainNames, "phishing.com.")
-	
+
 	group2, exists2 := dnsHandler.blockedDomainsMap["2"]
 	require.True(t, exists2)
 	assert.Len(t, group2, 1)
@@ -231,7 +231,7 @@ func TestDNS_Integration_MessageCacheKeyConsistency(t *testing.T) {
 
 	resp := &dns.Msg{}
 	resp.SetReply(msg1)
-	
+
 	dnsHandler.cacheMap.Store(key1, resp)
 
 	cachedResp, loaded := dnsHandler.cacheMap.Load(key2)

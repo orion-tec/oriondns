@@ -77,22 +77,30 @@ func (m *MockStats) Insert(ctx context.Context, t time.Time, domain, domainType 
 	return args.Error(0)
 }
 
-func (m *MockStats) GetMostUsedDomains(ctx context.Context, from, to time.Time, categories []string, limit int) ([]stats.MostUsedDomainResponse, error) {
+func (m *MockStats) GetMostUsedDomains(
+	ctx context.Context, from, to time.Time, categories []string, limit int,
+) ([]stats.MostUsedDomainResponse, error) {
 	args := m.Called(ctx, from, to, categories, limit)
 	return args.Get(0).([]stats.MostUsedDomainResponse), args.Error(1)
 }
 
-func (m *MockStats) GetUsedDomainsByTimeAggregation(ctx context.Context, from, to time.Time, domains []string) ([]stats.MostUsedDomainResponse, error) {
+func (m *MockStats) GetUsedDomainsByTimeAggregation(
+	ctx context.Context, from, to time.Time, domains []string,
+) ([]stats.MostUsedDomainResponse, error) {
 	args := m.Called(ctx, from, to, domains)
 	return args.Get(0).([]stats.MostUsedDomainResponse), args.Error(1)
 }
 
-func (m *MockStats) GetMostUsedDomainsByTimeAggregation(ctx context.Context, from, to time.Time, categories []string) ([]stats.MostUsedDomainResponse, error) {
+func (m *MockStats) GetMostUsedDomainsByTimeAggregation(
+	ctx context.Context, from, to time.Time, categories []string,
+) ([]stats.MostUsedDomainResponse, error) {
 	args := m.Called(ctx, from, to, categories)
 	return args.Get(0).([]stats.MostUsedDomainResponse), args.Error(1)
 }
 
-func (m *MockStats) GetServerUsageByTimeRange(ctx context.Context, from, to time.Time, categories []string) ([]stats.ServerUsageByTimeRangeResponse, error) {
+func (m *MockStats) GetServerUsageByTimeRange(
+	ctx context.Context, from, to time.Time, categories []string,
+) ([]stats.ServerUsageByTimeRangeResponse, error) {
 	args := m.Called(ctx, from, to, categories)
 	return args.Get(0).([]stats.ServerUsageByTimeRangeResponse), args.Error(1)
 }
@@ -112,7 +120,7 @@ func createTestDNS() *DNS {
 
 func TestDNS_updateBlockedDomainsMap(t *testing.T) {
 	dnsHandler := createTestDNS()
-	
+
 	testDomains := []blockeddomains.BlockedDomain{
 		{ID: 1, Domain: "malware.com", Recursive: false},
 		{ID: 2, Domain: ".ads.example.com", Recursive: true},
@@ -123,17 +131,17 @@ func TestDNS_updateBlockedDomainsMap(t *testing.T) {
 	assert.Len(t, dnsHandler.blockedDomainsMap, 2)
 	assert.Contains(t, dnsHandler.blockedDomainsMap, "1")
 	assert.Contains(t, dnsHandler.blockedDomainsMap, "2")
-	
+
 	assert.Equal(t, "malware.com", dnsHandler.blockedDomainsMap["1"][0].Domain)
 	assert.False(t, dnsHandler.blockedDomainsMap["1"][0].Recursive)
-	
+
 	assert.Equal(t, ".ads.example.com", dnsHandler.blockedDomainsMap["2"][0].Domain)
 	assert.True(t, dnsHandler.blockedDomainsMap["2"][0].Recursive)
 }
 
 func TestDNS_updateBlockedDomainsMap_ClearsExisting(t *testing.T) {
 	dnsHandler := createTestDNS()
-	
+
 	oldDomains := []blockeddomains.BlockedDomain{
 		{ID: 1, Domain: "old.com", Recursive: false},
 	}
@@ -144,7 +152,7 @@ func TestDNS_updateBlockedDomainsMap_ClearsExisting(t *testing.T) {
 		{ID: 2, Domain: "new.com", Recursive: false},
 	}
 	dnsHandler.updateBlockedDomainsMap(newDomains)
-	
+
 	assert.Len(t, dnsHandler.blockedDomainsMap, 1)
 	assert.Contains(t, dnsHandler.blockedDomainsMap, "2")
 	assert.NotContains(t, dnsHandler.blockedDomainsMap, "1")
@@ -152,7 +160,7 @@ func TestDNS_updateBlockedDomainsMap_ClearsExisting(t *testing.T) {
 
 func TestDNS_DomainBlocking_ExactMatch(t *testing.T) {
 	dnsHandler := createTestDNS()
-	
+
 	blockedDomains := []blockeddomains.BlockedDomain{
 		{ID: 1, Domain: "malware.com.", Recursive: false},
 	}
@@ -184,7 +192,7 @@ func TestDNS_DomainBlocking_ExactMatch(t *testing.T) {
 
 func TestDNS_DomainBlocking_RecursiveMatch(t *testing.T) {
 	dnsHandler := createTestDNS()
-	
+
 	blockedDomains := []blockeddomains.BlockedDomain{
 		{ID: 1, Domain: ".ads.example.com", Recursive: true},
 	}
@@ -216,7 +224,7 @@ func TestDNS_DomainBlocking_RecursiveMatch(t *testing.T) {
 
 func TestDNS_DomainBlocking_NoMatch(t *testing.T) {
 	dnsHandler := createTestDNS()
-	
+
 	blockedDomains := []blockeddomains.BlockedDomain{
 		{ID: 1, Domain: "malware.com.", Recursive: false},
 	}
@@ -248,7 +256,7 @@ func TestDNS_DomainBlocking_NoMatch(t *testing.T) {
 
 func TestDNS_DomainBlocking_RecursiveNoMatch(t *testing.T) {
 	dnsHandler := createTestDNS()
-	
+
 	blockedDomains := []blockeddomains.BlockedDomain{
 		{ID: 1, Domain: ".ads.example.com", Recursive: true},
 	}
@@ -280,7 +288,7 @@ func TestDNS_DomainBlocking_RecursiveNoMatch(t *testing.T) {
 
 func TestDNS_Cache_Store_Load(t *testing.T) {
 	dnsHandler := createTestDNS()
-	
+
 	msg := &dns.Msg{}
 	msg.Question = []dns.Question{
 		{Name: "google.com.", Qtype: dns.TypeA},
@@ -298,7 +306,7 @@ func TestDNS_Cache_Store_Load(t *testing.T) {
 
 func TestDNS_Cache_NotFound(t *testing.T) {
 	dnsHandler := createTestDNS()
-	
+
 	msg := &dns.Msg{}
 	msg.Question = []dns.Question{
 		{Name: "google.com.", Qtype: dns.TypeA},

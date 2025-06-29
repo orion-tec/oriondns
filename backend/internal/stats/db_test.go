@@ -69,7 +69,7 @@ func TestStatsDB_GetMostUsedDomains(t *testing.T) {
 	statsDB := New(database)
 
 	ctx := context.Background()
-	
+
 	_, err := pool.Exec(ctx, `
 		INSERT INTO domain_categories (domain, category) VALUES 
 		('google.com', 'search'),
@@ -78,7 +78,7 @@ func TestStatsDB_GetMostUsedDomains(t *testing.T) {
 	require.NoError(t, err)
 
 	baseTime := time.Date(2023, 1, 1, 12, 0, 0, 0, time.UTC)
-	
+
 	_, err = pool.Exec(ctx, `
 		INSERT INTO stats_aggregated (time, domain, count, q_type) VALUES 
 		($1, 'google.com', 10, 'A'),
@@ -91,7 +91,7 @@ func TestStatsDB_GetMostUsedDomains(t *testing.T) {
 
 	results, err := statsDB.GetMostUsedDomains(ctx, from, to, []string{}, 10)
 	require.NoError(t, err)
-	
+
 	require.Len(t, results, 2)
 	assert.Equal(t, "google.com", results[0].Domain)
 	assert.Equal(t, int64(10), results[0].Count)
@@ -108,7 +108,7 @@ func TestStatsDB_GetMostUsedDomains_WithCategories(t *testing.T) {
 	statsDB := New(database)
 
 	ctx := context.Background()
-	
+
 	_, err := pool.Exec(ctx, `
 		INSERT INTO domain_categories (domain, category) VALUES 
 		('google.com', 'search'),
@@ -117,7 +117,7 @@ func TestStatsDB_GetMostUsedDomains_WithCategories(t *testing.T) {
 	require.NoError(t, err)
 
 	baseTime := time.Date(2023, 1, 1, 12, 0, 0, 0, time.UTC)
-	
+
 	_, err = pool.Exec(ctx, `
 		INSERT INTO stats_aggregated (time, domain, count, q_type) VALUES 
 		($1, 'google.com', 10, 'A'),
@@ -130,7 +130,7 @@ func TestStatsDB_GetMostUsedDomains_WithCategories(t *testing.T) {
 
 	results, err := statsDB.GetMostUsedDomains(ctx, from, to, []string{"search"}, 10)
 	require.NoError(t, err)
-	
+
 	require.Len(t, results, 1)
 	assert.Equal(t, "google.com", results[0].Domain)
 	assert.Equal(t, int64(10), results[0].Count)
@@ -145,7 +145,7 @@ func TestStatsDB_GetServerUsageByTimeRange(t *testing.T) {
 	statsDB := New(database)
 
 	ctx := context.Background()
-	
+
 	_, err := pool.Exec(ctx, `
 		INSERT INTO domain_categories (domain, category) VALUES 
 		('google.com', 'search'),
@@ -155,7 +155,7 @@ func TestStatsDB_GetServerUsageByTimeRange(t *testing.T) {
 
 	baseTime1 := time.Date(2023, 1, 1, 12, 0, 0, 0, time.UTC)
 	baseTime2 := time.Date(2023, 1, 1, 12, 10, 0, 0, time.UTC)
-	
+
 	_, err = pool.Exec(ctx, `
 		INSERT INTO stats_aggregated (time, domain, count, q_type) VALUES 
 		($1, 'google.com', 10, 'A'),
@@ -169,7 +169,7 @@ func TestStatsDB_GetServerUsageByTimeRange(t *testing.T) {
 
 	results, err := statsDB.GetServerUsageByTimeRange(ctx, from, to, []string{})
 	require.NoError(t, err)
-	
+
 	require.Len(t, results, 2)
 	assert.Equal(t, int64(15), results[0].Count)
 	assert.Equal(t, int64(8), results[1].Count)
@@ -185,7 +185,7 @@ func TestStatsDB_GetUsedDomainsByTimeAggregation(t *testing.T) {
 
 	ctx := context.Background()
 	baseTime := time.Date(2023, 1, 1, 12, 0, 0, 0, time.UTC)
-	
+
 	_, err := pool.Exec(ctx, `
 		INSERT INTO stats_aggregated (time, domain, count, q_type) VALUES 
 		($1, 'google.com', 10, 'A'),
@@ -199,7 +199,7 @@ func TestStatsDB_GetUsedDomainsByTimeAggregation(t *testing.T) {
 
 	results, err := statsDB.GetUsedDomainsByTimeAggregation(ctx, from, to, domains)
 	require.NoError(t, err)
-	
+
 	require.Len(t, results, 2)
 	assert.Equal(t, "google.com", results[0].Domain)
 	assert.Equal(t, int64(10), results[0].Count)
