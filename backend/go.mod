@@ -1,6 +1,6 @@
 module github.com/orion-tec/oriondns
 
-go 1.23.5
+go 1.23
 
 require (
 	github.com/huandu/go-sqlbuilder v1.34.0
