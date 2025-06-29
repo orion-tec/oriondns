@@ -46,7 +46,7 @@ func (b *domainsDB) GetDomainsWithoutCategory(ctx context.Context) ([]Domain, er
 
 func (b *domainsDB) GetByDomain(ctx context.Context, domain string) (*Domain, error) {
 	row, err := b.db.Query(ctx, `
-		SELECT domain
+		SELECT domain, used_count, created_at, updated_at
 		FROM domains
 		WHERE domain = $1
 	`, domain)
