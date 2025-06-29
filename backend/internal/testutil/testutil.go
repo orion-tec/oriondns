@@ -60,7 +60,7 @@ func TruncateAllTables(t *testing.T, pool *pgxpool.Pool) {
 	tables := []string{
 		"stats_aggregated",
 		"blocked_domains",
-		"categories",
+		"domain_categories",
 		"domains",
 	}
 
