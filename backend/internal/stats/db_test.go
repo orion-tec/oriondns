@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/orion-tec/oriondns/db"
+	"github.com/orion-tec/oriondns/internal/domains"
 	"github.com/orion-tec/oriondns/internal/testutil"
 )
 
@@ -67,10 +68,16 @@ func TestStatsDB_GetMostUsedDomains(t *testing.T) {
 
 	database := db.NewWithPool(pool)
 	statsDB := New(database)
+	domainsDB := domains.New(database)
 
 	ctx := context.Background()
 
-	_, err := pool.Exec(ctx, `
+	err := domainsDB.Insert(ctx, "google.com")
+	require.NoError(t, err)
+	err = domainsDB.Insert(ctx, "facebook.com")
+	require.NoError(t, err)
+
+	_, err = pool.Exec(ctx, `
 		INSERT INTO domain_categories (domain, category) VALUES 
 		('google.com', 'search'),
 		('facebook.com', 'social')
@@ -106,10 +113,16 @@ func TestStatsDB_GetMostUsedDomains_WithCategories(t *testing.T) {
 
 	database := db.NewWithPool(pool)
 	statsDB := New(database)
+	domainsDB := domains.New(database)
 
 	ctx := context.Background()
 
-	_, err := pool.Exec(ctx, `
+	err := domainsDB.Insert(ctx, "google.com")
+	require.NoError(t, err)
+	err = domainsDB.Insert(ctx, "facebook.com")
+	require.NoError(t, err)
+
+	_, err = pool.Exec(ctx, `
 		INSERT INTO domain_categories (domain, category) VALUES 
 		('google.com', 'search'),
 		('facebook.com', 'social')
@@ -143,10 +156,16 @@ func TestStatsDB_GetServerUsageByTimeRange(t *testing.T) {
 
 	database := db.NewWithPool(pool)
 	statsDB := New(database)
+	domainsDB := domains.New(database)
 
 	ctx := context.Background()
 
-	_, err := pool.Exec(ctx, `
+	err := domainsDB.Insert(ctx, "google.com")
+	require.NoError(t, err)
+	err = domainsDB.Insert(ctx, "facebook.com")
+	require.NoError(t, err)
+
+	_, err = pool.Exec(ctx, `
 		INSERT INTO domain_categories (domain, category) VALUES 
 		('google.com', 'search'),
 		('facebook.com', 'social')
@@ -182,11 +201,17 @@ func TestStatsDB_GetUsedDomainsByTimeAggregation(t *testing.T) {
 
 	database := db.NewWithPool(pool)
 	statsDB := New(database)
+	domainsDB := domains.New(database)
 
 	ctx := context.Background()
 	baseTime := time.Date(2023, 1, 1, 12, 0, 0, 0, time.UTC)
 
-	_, err := pool.Exec(ctx, `
+	err := domainsDB.Insert(ctx, "google.com")
+	require.NoError(t, err)
+	err = domainsDB.Insert(ctx, "facebook.com")
+	require.NoError(t, err)
+
+	_, err = pool.Exec(ctx, `
 		INSERT INTO stats_aggregated (time, domain, count, q_type) VALUES 
 		($1, 'google.com', 10, 'A'),
 		($1, 'facebook.com', 5, 'A')

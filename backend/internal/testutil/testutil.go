@@ -58,9 +58,9 @@ func TruncateAllTables(t *testing.T, pool *pgxpool.Pool) {
 	ctx := context.Background()
 
 	tables := []string{
-		"stats",
+		"stats_aggregated",
 		"blocked_domains",
-		"categories",
+		"domain_categories",
 		"domains",
 	}
 

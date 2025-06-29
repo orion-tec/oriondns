@@ -98,6 +98,13 @@ jobs:
       env:
         PGPASSWORD: postgres
     
+    - name: Run migrations
+      run: |
+        go install github.com/jackc/tern/v2@latest
+        tern migrate --migrations ./migrations --config ./migrations/tern-ci.conf
+      env:
+        TERN_DB_URL: postgres://postgres:postgres@localhost:5432/oriondns_test?sslmode=disable
+
     - name: Run integration tests
       run: |
         TEST_DATABASE_URL="postgres://postgres:postgres@localhost:5432/oriondns_test?sslmode=disable" \
@@ -151,6 +158,13 @@ jobs:
       env:
         PGPASSWORD: postgres
     
+    - name: Run migrations
+      run: |
+        go install github.com/jackc/tern/v2@latest
+        tern migrate --migrations ./migrations --config ./migrations/tern-ci.conf
+      env:
+        TERN_DB_URL: postgres://postgres:postgres@localhost:5432/oriondns_test?sslmode=disable
+
     - name: Run tests with coverage
       run: |
         TEST_DATABASE_URL="postgres://postgres:postgres@localhost:5432/oriondns_test?sslmode=disable" \
