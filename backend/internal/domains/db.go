@@ -2,8 +2,10 @@ package domains
 
 import (
 	"context"
+	"errors"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 
 	"github.com/orion-tec/oriondns/db"
 )
@@ -63,13 +65,24 @@ func (b *domainsDB) GetByDomain(ctx context.Context, domain string) (*Domain, er
 }
 
 func (b *domainsDB) Insert(ctx context.Context, domain string) error {
+	// Try to insert the domain with used_count = 1
 	_, err := b.db.Exec(ctx, `
-		INSERT INTO domains (domain)
-			VALUES ($1)
-		ON CONFLICT(domain) DO UPDATE SET domain = $1, updated_at = now(), used_count = COALESCE(domains.used_count, 0) + 1
+		INSERT INTO domains (domain, used_count)
+		VALUES ($1, 1)
 	`, domain)
+
 	if err != nil {
-		return err
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) && pgErr.Code == "23505" { // 23505 is unique_violation
+			// If domain already exists, increment used_count
+			_, updateErr := b.db.Exec(ctx, `
+				UPDATE domains
+				SET used_count = used_count + 1, updated_at = now()
+				WHERE domain = $1
+			`, domain)
+			return updateErr
+		}
+		return err // Return other errors
 	}
 
 	return nil
