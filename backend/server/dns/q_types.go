@@ -19,7 +19,7 @@ var queryType = map[uint16]string{
 func getTypeString(t uint16) string {
 	q, ok := queryType[t]
 	if !ok {
-		str := strconv.Itoa(int(t))
+		str := strconv.FormatUint(uint64(t), 10)
 		return str
 	}
 	return q
