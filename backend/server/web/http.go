@@ -3,6 +3,7 @@ package web
 import (
 	"context"
 	"net/http"
+	"time"
 
 	"go.uber.org/fx"
 
@@ -27,18 +28,25 @@ func New(lc fx.Lifecycle, deps HttpDeps) *HTTP {
 
 	lc.Append(fx.Hook{
 		OnStart: func(_ context.Context) error {
-			go func() {
-				httpStruct.setupRoutes()
+			httpStruct.setupRoutes()
 
-				err := http.ListenAndServe(":8080", nil)
-				if err != nil {
+			httpStruct.s = &http.Server{
+				Addr:         ":8080",
+				ReadTimeout:  5 * time.Second,
+				WriteTimeout: 10 * time.Second,
+				IdleTimeout:  120 * time.Second,
+			}
+
+			go func() {
+				err := httpStruct.s.ListenAndServe()
+				if err != nil && err != http.ErrServerClosed {
 					panic(err)
 				}
 			}()
 			return nil
 		},
-		OnStop: func(_ context.Context) error {
-			return nil
+		OnStop: func(ctx context.Context) error {
+			return httpStruct.s.Shutdown(ctx)
 		},
 	})
 	return &httpStruct
