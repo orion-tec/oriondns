@@ -146,6 +146,7 @@ func TestDNS_Integration_ConcurrentBlockedDomainsUpdate(t *testing.T) {
 			}
 
 			isBlocked := false
+			dnsHandler.blockedDomainsMutext.Lock()
 			for _, bds := range dnsHandler.blockedDomainsMap {
 				for _, q := range msg.Question {
 					for _, bd := range bds {
@@ -156,6 +157,7 @@ func TestDNS_Integration_ConcurrentBlockedDomainsUpdate(t *testing.T) {
 					}
 				}
 			}
+			dnsHandler.blockedDomainsMutext.Unlock()
 			_ = isBlocked
 			time.Sleep(time.Microsecond)
 		}
@@ -176,6 +178,8 @@ func TestDNS_Integration_ConcurrentBlockedDomainsUpdate(t *testing.T) {
 	<-done
 	<-done
 
+	dnsHandler.blockedDomainsMutext.Lock()
+	defer dnsHandler.blockedDomainsMutext.Unlock()
 	assert.Contains(t, dnsHandler.blockedDomainsMap, "3")
 	assert.NotContains(t, dnsHandler.blockedDomainsMap, "1")
 	assert.NotContains(t, dnsHandler.blockedDomainsMap, "2")
