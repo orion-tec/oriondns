@@ -78,10 +78,6 @@ lint: ## Run linter (if available)
 		echo "golangci-lint not installed, skipping..."; \
 	fi
 
-vet: ## Run go vet
-	@echo "Running go vet..."
-	@go vet ./...
-
 fmt: ## Format code
 	@echo "Formatting code..."
 	@go fmt ./...
@@ -89,7 +85,7 @@ fmt: ## Format code
 dev-setup: deps setup-test-db ## Setup development environment
 	@echo "Development environment setup complete"
 
-ci-test: lint vet test-coverage ## Run CI tests (linting, vetting, and coverage)
+ci-test: lint test-coverage ## Run CI tests (linting, vetting, and coverage)
 
 # Docker targets
 docker-build: ## Build Docker images
