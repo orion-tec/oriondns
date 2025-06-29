@@ -80,7 +80,8 @@ func (d *DNS) handleRequest(c *dns.Client) dns.HandlerFunc {
 
 		// Validate if it's blocked
 		isBlocked := false
-		for _, bds := range d.blockedDomainsMap {
+		for key := range d.blockedDomainsMap {
+			bds := d.blockedDomainsMap[key]
 			for _, q := range msg.Question {
 				for _, bd := range bds {
 					if bd.Recursive && strings.HasSuffix(q.Name, bd.Domain) {
