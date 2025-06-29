@@ -214,7 +214,7 @@ jobs:
         go-version: '1.23'
     
     - name: Run Gosec Security Scanner
-      uses: securego/gosec-action@main
+      uses: securego/gosec-action@v2
       with:
         args: './backend/...'
         format: sarif
